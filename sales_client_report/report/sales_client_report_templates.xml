@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_sales_client_template">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <h2 class="text-center">Sales Client Report</h2>
+
+                    <div class="row mt32 mb32">
+                        <div class="col-6">
+                            <strong>Date From:</strong> <span t-esc="data['date_from']" t-options="{'widget': 'date'}"/><br/>
+                            <strong>Date To:</strong> <span t-esc="data['date_to']" t-options="{'widget': 'date'}"/><br/>
+                            <strong>Partners:</strong> <span t-esc="data['partner_names']"/>
+                        </div>
+                    </div>
+
+                    <!-- Loop for each partner -->
+                    <t t-foreach="grouped_invoices" t-as="partner_name">
+                        <div class="mt-4">
+                            <!-- Partner Header -->
+                            <h4 style="border-bottom: 2px solid #dee2e6; padding-bottom: 5px; margin-bottom: 10px;">
+                                <span t-esc="partner_name"/>
+                            </h4>
+
+                            <table class="table table-sm table-striped table-hover">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th style="width: 10%;">Date</th>
+                                        <th style="width: 12%;">Invoice</th>
+                                        <th class="text-right" style="width: 10%;">Sales</th>
+                                        <th class="text-right" style="width: 10%;">Tax</th>
+                                        <th class="text-right" style="width: 12%;">Total Value</th>
+                                        <th class="text-right" style="width: 12%;">Paid</th>
+                                        <th class="text-right" style="width: 12%;">Remaining</th>
+                                        <th style="width: 10%;">Due days</th>
+                                        <th style="width: 12%;">Payment Terms</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Invoice Lines for the current partner -->
+                                    <t t-foreach="grouped_invoices[partner_name]['invoices']" t-as="inv">
+                                        <tr>
+                                            <td><span t-esc="inv['date']" t-options="{'widget': 'date'}"/></td>
+                                            <td><span t-esc="inv['invoice_name']"/></td>
+                                            <td class="text-right"><span t-esc="inv['sales']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                            <td class="text-right"><span t-esc="inv['tax']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                            <td class="text-right"><span t-esc="inv['total_value']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                            <td class="text-right"><span t-esc="inv['paid']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                            <td class="text-right"><span t-esc="inv['remaining']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                            <td><span t-esc="inv['due_days']"/></td>
+                                            <td><span t-esc="inv['payment_terms']"/></td>
+                                        </tr>
+                                    </t>
+                                    <!-- Subtotal Row for the current partner -->
+                                    <tr class="table-secondary" style="font-weight: bold;">
+                                        <td colspan="2" class="text-right">Subtotal</td>
+                                        <td class="text-right"><span t-esc="grouped_invoices[partner_name]['subtotal']['sales']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                        <td class="text-right"><span t-esc="grouped_invoices[partner_name]['subtotal']['tax']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                        <td class="text-right"><span t-esc="grouped_invoices[partner_name]['subtotal']['total_value']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                        <td class="text-right"><span t-esc="grouped_invoices[partner_name]['subtotal']['paid']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                        <td class="text-right"><span t-esc="grouped_invoices[partner_name]['subtotal']['remaining']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                        <td colspan="2"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                    
+                    <!-- Grand Total Table -->
+                    <div class="row justify-content-end mt-4">
+                         <div class="col-12">
+                             <table class="table table-sm">
+                                <tr class="bg-primary text-white" style="font-weight: bold; font-size: 1.1em;">
+                                    <td style="width: 22%;" class="text-right border-0">Grand Total</td>
+                                    <td class="text-right border-0" style="width: 10%;"><span t-esc="grand_total['sales']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                    <td class="text-right border-0" style="width: 10%;"><span t-esc="grand_total['tax']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                    <td class="text-right border-0" style="width: 12%;"><span t-esc="grand_total['total_value']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                    <td class="text-right border-0" style="width: 12%;"><span t-esc="grand_total['paid']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                    <td class="text-right border-0" style="width: 12%;"><span t-esc="grand_total['remaining']" t-options="{'widget': 'monetary', 'display_currency': res_company.currency_id}"/></td>
+                                    <td class="border-0" style="width: 22%;"></td>
+                                </tr>
+                             </table>
+                         </div>
+                    </div>
+
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,31 @@
+<odoo>
+  <data>
+    <!--
+    The user requested to change the xpath to '//group/group/'.
+    This is not a recommended practice as it is not specific enough and can lead to unexpected behavior.
+    A better xpath for the eta_partner_id field would be '//group[@id="header_left_group"]'
+    A better xpath for the credit_limit field would be '//page[@name="accounting_tab"]//group[@name="accounting_partner_financial_risk"]'
+    -->
+    <record model="ir.ui.view" id="view_move_form_inherit">
+      <field name="name">account.move.form.inherit</field>
+      <field name="model">account.move</field>
+      <field name="inherit_id" ref="account.view_move_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//group/group" position="inside">
+          <field name="eta_partner_id"/>
+        </xpath>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_partner_form_inherit">
+      <field name="name">res.partner.form.inherit</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_partner_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//group/group" position="inside">
+          <field name="credit_limit"/>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>

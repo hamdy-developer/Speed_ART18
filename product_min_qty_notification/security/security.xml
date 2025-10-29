@@ -1,0 +1,13 @@
+<odoo>
+  <data>
+    <record id="module_category_product_notifications" model="ir.module.category">
+      <field name="name">Product Notifications</field>
+      <field name="sequence">10</field>
+    </record>
+
+    <record id="group_min_qty_notification" model="res.groups">
+      <field name="name">Minimum Quantity Notification</field>
+         <field name="category_id" ref="product_min_qty_notification.module_category_product_notifications"/>
+    </record>
+  </data>
+</odoo>

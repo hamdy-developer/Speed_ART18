@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Wizard Form View -->
+        <record id="view_sales_client_wizard_form" model="ir.ui.view">
+            <field name="name">sales.client.wizard.form</field>
+            <field name="model">sales.client.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group>
+                            <field name="account_type" widget="radio"/>
+                        </group>
+                    </group>
+                    <group>
+                       <field name="partner_ids" widget="many2many_tags" placeholder="Leave empty for all partners..."/>
+                    </group>
+                    <footer>
+                        <button name="action_print_report" string="Print" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!-- Wizard Action -->
+        <record id="action_sales_client_wizard" model="ir.actions.act_window">
+            <field name="name">Sales Client Report</field>
+            <field name="res_model">sales.client.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <!-- Menu Item in Accounting -> Reporting -->
+        <menuitem
+            id="menu_sales_client_report"
+            name="Sales Client Report"
+            parent="account.menu_finance_reports"
+            action="action_sales_client_wizard"
+            sequence="100"/>
+
+    </data>
+</odoo>

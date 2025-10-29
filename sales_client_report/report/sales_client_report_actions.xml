@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_report_sales_client" model="ir.actions.report">
+            <field name="name">Sales Client Report</field>
+            <field name="model">sales.client.wizard</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">sales_client_report.report_sales_client_template</field>
+            <field name="report_file">sales_client_report.report_sales_client_template</field>
+            <field name="print_report_name">'Sales Client Report - %s' % (object.date_to)</field>
+            <field name="binding_model_id" eval="False"/>
+        </record>
+    </data>
+</odoo>
