@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_saleorder_art_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.basic_layout">
+                    <div class="page" style="direction: rtl;">
+                        <div class="row">
+                            <div class="col-4 text-right">
+                                <strong>تاريخ الفاتورة:</strong> <span t-field="o.date_order" t-options="{'format': 'yyyy-MM-dd HH:mm:ss'}"/><br/>
+                                <strong>اسم العميل:</strong> <span t-field="o.partner_id.name"/><br/>
+                                <strong>العنوان:</strong> <span t-field="o.partner_id.contact_address"/><br/>
+                                <strong>موبيل العميل:</strong> <span t-field="o.partner_id.mobile"/><br/>
+                                <strong>مندوب المبيعات:</strong> <span t-field="o.user_id.name"/>
+                            </div>
+
+                            <div class="col-4 text-center">
+                                <h2>فاتورة رقم</h2>
+                                <h3><span t-field="o.name"/></h3>
+                            </div>
+                            <div class="col-4">
+                                <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="max-height: 200px;" alt="Logo"/>
+                            </div>
+
+                        </div>
+
+                        <table class="table table-sm table-bordered mt-4">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">م</th>
+                                    <th class="text-center">الكود</th>
+                                    <th class="text-center">اسم الصنف</th>
+                                    <th class="text-center">brand</th>
+                                    <th class="text-center">الكميه</th>
+                                    <th class="text-center">سعر الوحده بعد الضريبة</th>
+                                    <th class="text-center">الاجمالي شامل الضريبة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="i" t-value="1"/>
+                                <t t-foreach="o.order_line" t-as="line">
+                                    <tr>
+                                        <td class="text-center"><t t-esc="i"/></td>
+                                        <td><span t-field="line.product_id.default_code"/></td>
+                                        <td><span t-field="line.name"/></td>
+                                        <td><span t-field="line.product_id.x_brand"/></td>
+                                        <td class="text-center"><span t-field="line.product_uom_qty"/></td>
+                                        <td class="text-right"><span t-esc="'{:.2f}'.format(line.price_total / line.product_uom_qty if line.product_uom_qty else 0)"/></td>
+                                        <td class="text-right"><span t-field="line.price_total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                    </tr>
+                                    <t t-set="i" t-value="i + 1"/>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <div class="row justify-content-end">
+                            <div class="col-4">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>الاجمالي بعد الضريبة</strong></td>
+                                        <td class="text-right">
+                                            <span t-field="o.amount_total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <strong>تفقيط الفاتوره :</strong>
+                                <span t-esc="o.currency_id.amount_to_text(o.amount_total)"/>
+                            </div>
+                        </div>
+
+                        <div class="row" style="position: fixed; bottom: 50px; width: 100%;">
+                            <div class="col-12 text-center">
+                                <p>عميلنا العزيز لايتم قبول المرتجع الا بأصل الفاتوره وفي خلال 14 يوم فقط من استلام الفاتوره البضاعة امانة لدى العميل لحين سداد قيمتها بالكامل</p>
+                                <p>عقار 9420 ش الدكتور سعيد فهمى من شارع اللواء احمد هميمي الحي الثامن الهضبة الوسطى المقطم ت- 0227239447 - 01144149900-0227258102</p>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

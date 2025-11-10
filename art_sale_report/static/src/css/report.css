@@ -1,0 +1,15 @@
+.o_report_layout_standard .table-bordered,
+.o_report_layout_boxed .table-bordered {
+    border: 1px solid black !important;
+}
+
+.o_report_layout_standard .table-bordered th,
+.o_report_layout_standard .table-bordered td,
+.o_report_layout_boxed .table-bordered th,
+.o_report_layout_boxed .table-bordered td {
+    border: 1px solid black !important;
+}
+
+.table thead th {
+    background-color: #f2f2f2;
+}

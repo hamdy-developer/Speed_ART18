@@ -1,0 +1,21 @@
+{
+    'name': 'ART Sale Report',
+    'version': '1.0',
+    'summary': 'Custom sale order report for Arab Royal Trading',
+    'description': 'This module provides a custom sale order report in the format requested by ART.',
+    'author': 'Gemini',
+    'depends': ['sale', 'product'],
+    'data': [
+        'security/ir.model.access.csv',
+        'report/sale_report.xml',
+        'report/sale_report_template.xml',
+        'views/product_views.xml',
+    ],
+    'assets': {
+        'web.report_assets_common': [
+            'art_sale_report/static/src/css/report.css',
+        ],
+    },
+    'installable': True,
+    'application': False,
+}
