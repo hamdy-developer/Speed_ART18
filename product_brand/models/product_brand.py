@@ -41,3 +41,29 @@ class ProductBrand(models.Model):
         data = {group["product_brand_id"][0]: group["__count"] for group in groups}
         for brand in self:
             brand.products_count = data.get(brand.id, 0)
+
+
+class ProductPricelist(models.Model):
+    _inherit = 'product.pricelist'
+
+    product_brand_id = fields.Many2one(
+        "product.brand", string="Brand", help="Select a brand for this product"
+    )
+
+
+
+
+class product_pricelist_item(models.Model):
+    _inherit = 'product.pricelist.item'
+
+    product_brand_id = fields.Many2one(
+        "product.brand", string="Brand", help="Select a brand for this product"
+    )
+
+    @api.onchange('product_tmpl_id')
+    def get_product_brand_id(self):
+        for rec in self:
+            rec.product_brand_id = rec.product_tmpl_id.product_brand_id
+
+
+
