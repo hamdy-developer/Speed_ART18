@@ -62,18 +62,6 @@
                         <div class="row justify-content-end">
                             <div class="col-4">
                                 <table class="table table-sm">
-                                     <tr>
-                                        <td><strong>المجموع الفرعي</strong></td>
-                                        <td class="text-right">
-                                            <span t-field="o.amount_untaxed" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>الخصم</strong></td>
-                                        <td class="text-right">
-                                            <span t-esc="total_discount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
-                                        </td>
-                                    </tr>
                                     <tr>
                                         <td><strong>الاجمالي</strong></td>
                                         <td class="text-right">
