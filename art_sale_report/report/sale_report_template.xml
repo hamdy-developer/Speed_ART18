@@ -4,7 +4,7 @@
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
                 <t t-call="web.basic_layout">
-                    <div class="page" style="direction: rtl;">
+                    <div class="page" style="direction: rtl;font-size: 90%">
                         <div class="row">
                             <div class="col-4 text-right">
                                 <strong>تاريخ الفاتورة:</strong> <span t-field="o.date_order" t-options="{'format': 'yyyy-MM-dd HH:mm:ss'}"/><br/>
@@ -19,7 +19,7 @@
                                 <h3><span t-field="o.name"/></h3>
                             </div>
                             <div class="col-4">
-                                <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="max-height: 200px;" alt="Logo"/>
+                                <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="max-height: 170px;" alt="Logo"/>
                             </div>
 
                         </div>
@@ -30,10 +30,11 @@
                                     <th class="text-center">م</th>
                                     <th class="text-center">الكود</th>
                                     <th class="text-center">اسم الصنف</th>
-                                    <th class="text-center">brand</th>
+                                    <th class="text-center">براند</th>
                                     <th class="text-center">الكميه</th>
-                                    <th class="text-center">سعر الوحده بعد الضريبة</th>
-                                    <th class="text-center">الاجمالي شامل الضريبة</th>
+                                    <th class="text-center">سعر الوحده</th>
+                                    <th class="text-center">الخصم</th>
+                                    <th class="text-center">الاجمالي</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -43,9 +44,10 @@
                                         <td class="text-center"><t t-esc="i"/></td>
                                         <td><span t-field="line.product_id.default_code"/></td>
                                         <td><span t-field="line.name"/></td>
-                                        <td><span t-field="line.product_id.x_brand"/></td>
+                                        <td><span t-field="line.product_id.product_brand_id"/></td>
                                         <td class="text-center"><span t-field="line.product_uom_qty"/></td>
-                                        <td class="text-right"><span t-esc="'{:.2f}'.format(line.price_total / line.product_uom_qty if line.product_uom_qty else 0)"/></td>
+                                        <td class="text-right"><span t-field="line.price_unit" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                        <td class="text-center"><span t-field="line.discount"/> %</td>
                                         <td class="text-right"><span t-field="line.price_total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
                                     </tr>
                                     <t t-set="i" t-value="i + 1"/>
@@ -53,11 +55,29 @@
                             </tbody>
                         </table>
 
+                        <t t-set="total_gross" t-value="0"/>
+                        <t t-foreach="o.order_line" t-as="line_calc">
+                            <t t-set="total_gross" t-value="total_gross + (line_calc.price_unit * line_calc.product_uom_qty)"/>
+                        </t>
+                        <t t-set="total_discount" t-value="total_gross - o.amount_untaxed"/>
+
                         <div class="row justify-content-end">
                             <div class="col-4">
                                 <table class="table table-sm">
+                                     <tr>
+                                        <td><strong>المجموع الفرعي</strong></td>
+                                        <td class="text-right">
+                                            <span t-field="o.amount_untaxed" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                        </td>
+                                    </tr>
                                     <tr>
-                                        <td><strong>الاجمالي بعد الضريبة</strong></td>
+                                        <td><strong>الخصم</strong></td>
+                                        <td class="text-right">
+                                            <span t-esc="total_discount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>الاجمالي</strong></td>
                                         <td class="text-right">
                                             <span t-field="o.amount_total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
                                         </td>
