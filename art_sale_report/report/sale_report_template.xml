@@ -33,7 +33,6 @@
                                     <th class="text-center">براند</th>
                                     <th class="text-center">الكميه</th>
                                     <th class="text-center">سعر الوحده</th>
-                                    <th class="text-center">الخصم</th>
                                     <th class="text-center">الاجمالي</th>
                                 </tr>
                             </thead>
@@ -47,7 +46,6 @@
                                         <td><span t-field="line.product_id.product_brand_id"/></td>
                                         <td class="text-center"><span t-field="line.product_uom_qty"/></td>
                                         <td class="text-right"><span t-field="line.price_unit" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
-                                        <td class="text-center"><span t-field="line.discount"/> %</td>
                                         <td class="text-right"><span t-field="line.price_total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
                                     </tr>
                                     <t t-set="i" t-value="i + 1"/>
