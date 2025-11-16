@@ -45,8 +45,8 @@
                                         <td><span t-field="line.name"/></td>
                                         <td><span t-field="line.product_id.product_brand_id"/></td>
                                         <td class="text-center"><span t-field="line.product_uom_qty"/></td>
-                                        <td class="text-right"><span t-esc="line.price_total/line.product_uom_qty" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
-                                        <td class="text-right"><span t-field="line.price_total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                        <td class="text-right"><span t-esc="round(line.price_total,0)/line.product_uom_qty" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                        <td class="text-right"><span t-esc="round(line.price_total,0)" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
                                     </tr>
                                     <t t-set="i" t-value="i + 1"/>
                                 </t>
@@ -65,7 +65,7 @@
                                     <tr>
                                         <td><strong>الاجمالي</strong></td>
                                         <td class="text-right">
-                                            <span t-field="o.amount_total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                            <span t-field="round(o.amount_total,0)" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
                                         </td>
                                     </tr>
                                 </table>
