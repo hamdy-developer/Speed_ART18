@@ -39,13 +39,13 @@
                             <tbody>
                                 <t t-set="i" t-value="1"/>
                                 <t t-foreach="o.order_line" t-as="line">
-                                    <tr>
+                                    <tr t-if="line.product_uom_qty">
                                         <td class="text-center"><t t-esc="i"/></td>
                                         <td><span t-field="line.product_id.default_code"/></td>
                                         <td><span t-field="line.name"/></td>
                                         <td><span t-field="line.product_id.product_brand_id"/></td>
                                         <td class="text-center"><span t-field="line.product_uom_qty"/></td>
-                                        <td class="text-right"><span t-field="line.price_unit" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                        <td class="text-right"><span t-esc="line.price_total/line.product_uom_qty" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
                                         <td class="text-right"><span t-field="line.price_total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
                                     </tr>
                                     <t t-set="i" t-value="i + 1"/>
