@@ -65,7 +65,7 @@
                                     <tr>
                                         <td><strong>الاجمالي</strong></td>
                                         <td class="text-right">
-                                            <span t-field="round(o.amount_total,0)" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                            <span t-esc="round(o.amount_total,0)" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
                                         </td>
                                     </tr>
                                 </table>
