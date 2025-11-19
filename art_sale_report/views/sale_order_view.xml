@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_form_inherit_art_warehouse" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.art.warehouse</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Move warehouse_id to the header -->
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='other_information']/group[1]/group[@name='sale_shipping']/field[@name='warehouse_id'][2]"
+                       position="move"/>
+            </xpath>
+
+            <!-- Add domain to product_template_id in order_line -->
+            <xpath expr="//field[@name='order_line']/list/field[@name='product_template_id']" position="attributes">
+                <attribute name="domain">[('id', 'in', parent.products_in_warehouse), ('sale_ok', '=', True), '|', ('company_id', '=', False), ('company_id', '=', parent.company_id)]</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>
