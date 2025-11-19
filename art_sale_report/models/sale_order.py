@@ -23,3 +23,21 @@ class SaleOrder(models.Model):
                 # If no warehouse is selected, all sellable products are available
                 all_product_templates = self.env['product.template'].search([('sale_ok', '=', True)])
                 order.products_in_warehouse = [(6, 0, all_product_templates.ids)]
+
+    @api.onchange('warehouse_id')
+    def _onchange_warehouse_id_for_tax(self):
+        tax_free_fp = self.env.ref('art_sale_report.fiscal_position_tax_free', raise_if_not_found=False)
+        if not tax_free_fp:
+            return
+
+        if self.warehouse_id and self.warehouse_id.x_is_tax_free:
+            self.fiscal_position_id = tax_free_fp
+        else:
+            if self.fiscal_position_id and self.fiscal_position_id.id == tax_free_fp.id:
+                # Revert to the default fiscal position for the partner
+                self.fiscal_position_id = self.env['account.fiscal.position']._get_fiscal_position(self.partner_id, self.partner_shipping_id)
+
+    @api.onchange('partner_id')
+    def onchange_partner_id_warehouse_id(self):
+        self._onchange_warehouse_id_for_tax()
+

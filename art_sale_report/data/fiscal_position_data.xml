@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data > <!-- noupdate=1 so users can change it later -->
+        <record id="fiscal_position_tax_free" model="account.fiscal.position">
+            <field name="name">Tax Free Warehouse</field>
+<!--            <field name="company_id" eval="base.us"/> &lt;!&ndash; Available for all companies &ndash;&gt;-->
+        </record>
+
+    </data>
+</odoo>
