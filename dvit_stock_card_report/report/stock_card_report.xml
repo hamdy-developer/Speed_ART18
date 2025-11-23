@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <template id="stock_card_report">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-size: 11px;">
+                        <div class="oe_structure"/>
+                        <h2>
+                            Stock Card
+                            <h3 t-if="data['owner']">For Owner:
+                                <span t-esc="data['owner'].name"/>
+                            </h3>
+                        </h2>
+
+                        <div class="row mt32 mb32">
+                            <div class="col-4">
+                                <span>Location :</span>
+                                <sapn t-esc="data['location'].name"/>
+                            </div>
+                            <div class="col-4">
+                                <span>Product:</span>
+                                <sapn t-esc="data['product'].display_name"/>
+                            </div>
+                        </div>
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>partner</th>
+                                    <th>Ref</th>
+                                    <th>Locations</th>
+                                    <th>UOM</th>
+                                    <th>In</th>
+                                    <th>Out</th>
+                                    <th>Bal.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr id="init_bal">
+                                    <td colspan="5">
+                                        Initial balance
+                                    </td>
+                                    <td>
+                                        <span t-esc="data['init_bal']['in']"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="data['init_bal']['out']"/>
+                                    </td>
+                                    <td>
+                                        <t t-set="bal" t-value="data['init_bal']['in'] - data['init_bal']['out']"/>
+                                        <span t-esc="bal"/>
+                                    </td>
+                                </tr>
+                                <t t-foreach="docs" t-as="l">
+                                    <tr>
+                                        <td>
+                                            <span t-field="l.date"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="l.picking_id.partner_id.name"/>
+                                            //
+                                            <span t-esc="l.restrict_partner_id.name"/>
+                                            //
+                                        </td>
+                                        <td>
+                                            <span t-field="l.origin"/>
+                                            >
+                                            <span t-field="l.picking_id.name"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="l.location_id.name"/>
+                                            >
+                                            <span t-field="l.location_dest_id.name"/>
+                                        </td>
+                                        <td>
+                                            <span t-if="l.product_uom == l.product_id.uom_id"
+                                                  t-field="l.product_uom.name"/>
+                                            <span t-if="l.product_uom != l.product_id.uom_id"
+                                                  t-field="l.product_id.uom_id.name"/>
+                                        </td>
+                                        <t t-set="xqty"
+                                           t-value="l.product_uom_qty if l.location_dest_id == data['location'] else -l.product_uom_qty"/>
+                                        <t t-if="l.product_uom != l.product_id.uom_id" t-set="qty"
+                                           t-value="xqty * l.product_id.uom_id.factor if l.product_id.uom_id.factor != 1 else l.product_uom.factor * xqty"/>
+                                        <t t-if="l.product_uom == l.product_id.uom_id" t-set="qty" t-value="xqty"/>
+                                        <td>
+                                            <span t-if="qty > 0" t-esc="qty"/>
+                                        </td>
+                                        <td>
+                                            <span t-if="qty &lt; 0" t-esc="-qty"/>
+                                        </td>
+                                        <td>
+                                            <t t-set="bal" t-value="bal + qty"/>
+                                            <span t-esc="bal"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <div class="oe_structure"/>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <report id="action_stock_card"
+                model="stock.picking.type"
+                string="Stock Card"
+                report_type="qweb-pdf"
+                name="dvit_stock_card_report.stock_card_report"
+                file="dvit_stock_card_report.stock_card_report"/>
+
+        <record id="view_wizard_stock_card" model="ir.ui.view">
+            <field name="name">Stock Card</field>
+            <field name="model">wizard.stock.card</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="location_id" domain="[('usage','=','internal')]"/>
+                            <field name="product_id"/>
+                        </group>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="owner_id"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="print_pdf_stock_card" string="Print" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_wizard_stock_card" model="ir.actions.act_window">
+            <field name="name">Stock Card</field>
+            <field name="res_model">wizard.stock.card</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_wizard_stock_card"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="stock_card_pdf_report" parent="stock.menu_stock_root" name="Stock Card"
+                  groups="stock.group_stock_manager"/>
+        <menuitem id="menu_action_wizard_stock_card" action="action_wizard_stock_card" parent="stock_card_pdf_report"
+                  sequence="1"/>
+    </data>
+</odoo>

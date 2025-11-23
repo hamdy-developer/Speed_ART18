@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem
+        id="menu_packaging_report"
+        name="Packaging Quantity Report"
+        action="action_open_product_packaging_report_wizard"
+        parent="stock.menu_warehouse_report"
+        sequence="100"/>
+</odoo>

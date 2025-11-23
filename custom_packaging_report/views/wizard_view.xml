@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_packaging_report_wizard_form_view" model="ir.ui.view">
+        <field name="name">product.packaging.report.wizard.form</field>
+        <field name="model">product.packaging.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Packaging Report">
+                <group>
+                    <field name="product_ids" widget="many2many_tags"/>
+                    <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
+                </group>
+                <footer>
+                    <!-- التعديل هنا -->
+                    <button name="action_print_xlsx_report" string="Export to Excel" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- action_open... و menuitem يبقيان كما هما -->
+    <record id="action_open_product_packaging_report_wizard" model="ir.actions.act_window">
+        <field name="name">Packaging Quantity Report</field>
+        <field name="res_model">product.packaging.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

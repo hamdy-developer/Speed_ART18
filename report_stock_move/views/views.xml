@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+<!--        Item Card Without Cost-->
+        <record id="general_ledger_vendor_wizard_view_form" model="ir.ui.view">
+            <field name="name">inventory.location.wizard.view</field>
+            <field name="model">inventory.location.wizard</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                            </group>
+                            <group>
+                                <field name="product_ids" widget="many2many_tags"/>
+                                <field name="location_ids" widget="many2many_tags"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Export Xlsx" name="export_product" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="inventory_location_wizard_view_action" model="ir.actions.act_window">
+            <field name="name">inventory location wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">inventory.location.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    <!-- Add Text Here -->
+                </p>
+            </field>
+        </record>
+<!--        <menuitem id="inventory_location_wizard_view_menu" name="Item Card"-->
+<!--                  parent="stock.menu_warehouse_report" action="inventory_location_wizard_view_action" sequence="100"/>-->
+        <record id="report_action_id_inventory_location" model="ir.actions.report">
+            <field name="name">Custom XLS Report</field>
+            <field name="model">inventory.location.wizard</field>
+            <field name="report_type">xlsx</field>
+            <field name="report_name">report_stock_move.report_location</field>
+            <field name="report_file">Custom XLS Report</field>
+            <field name="binding_model_id" ref="report_stock_move.model_inventory_location_wizard"/>
+            <field name="binding_type">report</field>
+            <field name="attachment_use">False</field>
+        </record>
+<!--        Item Card With Cost-->
+        <record id="id_item_card_with_cost_form" model="ir.ui.view">
+            <field name="name">item card with cost form</field>
+            <field name="model">item_card.with_cost</field>
+            <field name="arch" type="xml">
+                <form string="Item Card With Cost Form">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                            </group>
+                            <group>
+                                <field name="product_ids" widget="many2many_tags"/>
+                                <field name="lot_ids" widget="many2many_tags"/>
+                                <field name="location_ids" widget="many2many_tags"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Export Xlsx" name="export_product_with_cost" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        <record id="id_item_card_with_cost_action" model="ir.actions.act_window">
+            <field name="name">Item Card With Cost</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">item_card.with_cost</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    <!-- Add Text Here -->
+                </p>
+            </field>
+        </record>
+        <menuitem id="id_item_card_with_cost_menu" name="Item Card With Cost"
+                  parent="stock.menu_warehouse_report" action="id_item_card_with_cost_action" sequence="100"/>
+        <record id="id_report_item_card_with_cost" model="ir.actions.report">
+            <field name="name">Custom XLS Report</field>
+            <field name="model">item_card.with_cost</field>
+            <field name="report_type">xlsx</field>
+            <field name="report_name">report_stock_move.report_item_card_with_cost</field>
+            <field name="report_file">Custom XLS Report</field>
+            <field name="binding_model_id" ref="report_stock_move.model_item_card_with_cost"/>
+            <field name="binding_type">report</field>
+            <field name="attachment_use">False</field>
+        </record>
+    </data>
+</odoo>

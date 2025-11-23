@@ -1,0 +1,36 @@
+<odoo>
+    <record id="view_product_movement_wizard_form" model="ir.ui.view">
+        <field name="name">product.movement.wizard.form</field>
+        <field name="model">product.movement.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="location_ids" widget="many2many_tags"/>
+                    </group>
+                    <footer>
+                        <button string="View Report" type="object" name="action_view_report" class="btn-primary"/>
+                        <button string="Export to Excel" type="object" name="action_export_excel"
+                                class="btn-secondary"/>
+                        <button string="Export to PDF" type="object" name="action_export_pdf" class="btn-secondary"/>
+                        <button string="Cancel" class="btn-link" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_product_movement_wizard" model="ir.actions.act_window">
+        <field name="name">Stock Movement Wizard</field>
+        <field name="res_model">product.movement.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="menu_product_movement_report"
+              name="Stock Movement Report"
+              parent="stock.menu_warehouse_report"
+              action="action_product_movement_wizard"/>
+
+
+</odoo>

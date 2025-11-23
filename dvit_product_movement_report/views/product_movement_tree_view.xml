@@ -1,0 +1,28 @@
+<odoo>
+    <record id="action_stock_movement_tree_view" model="ir.actions.act_window">
+        <field name="name">Stock Movement Report</field>
+        <field name="res_model">stock.movement.report</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+        <field name="help">View product stock movement details.</field>
+    </record>
+
+    <record id="view_stock_movement_tree" model="ir.ui.view">
+        <field name="name">stock.movement.tree</field>
+        <field name="model">stock.movement.report</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="product_id"/>
+                <field name="location_id" string="Location"/>
+                <field name="date" string="Date"/>
+                <field name="in_qty" string="In Quantity"/>
+                <field name="out_qty" string="Out Quantity"/>
+                <field name="balance" string="Balance"/>
+            </list>
+        </field>
+    </record>
+
+    <!--    <menuitem id="menu_product_movement_report" name="Stock Movement Report"-->
+    <!--              parent="stock.menu_warehouse_report" action="action_stock_movement_tree_view"/>-->
+
+</odoo>
