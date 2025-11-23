@@ -6,6 +6,7 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     products_in_warehouse = fields.Many2many('product.template', compute='_compute_products_in_warehouse', string='Products in Warehouse')
+    partner_tags = fields.Many2many(related='partner_id.category_id', string='Partner Tags', readonly=True)
 
     @api.depends('warehouse_id')
     def _compute_products_in_warehouse(self):

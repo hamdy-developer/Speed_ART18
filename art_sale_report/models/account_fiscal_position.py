@@ -10,3 +10,5 @@ class AccountFiscalPosition(models.Model):
         if tax_free_fp and self.id == tax_free_fp.id:
             return self.env['account.tax'] # Return empty recordset for taxes
         return super(AccountFiscalPosition, self).map_tax(taxes)
+
+    
