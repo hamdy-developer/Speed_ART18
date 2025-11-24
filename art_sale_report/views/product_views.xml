@@ -10,6 +10,9 @@
                 <xpath expr="//field[@name='standard_price']" position="attributes">
                     <attribute name="readonly">1</attribute>
                 </xpath>
+                <xpath expr="//field[@name='list_price']" position="after">
+                    <field name="pricelist_price"/>
+                </xpath>
             </field>
         </record>
 
@@ -33,6 +36,34 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='standard_price']" position="attributes">
                     <attribute name="readonly">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit Product Template Tree View -->
+        <record id="product_template_tree_view_inherit_art" model="ir.ui.view">
+            <field name="name">product.template.tree.inherit.art</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='list_price']" position="after">
+                    <field name="pricelist_price" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit Product Template Kanban View -->
+        <record id="product_template_kanban_view_inherit_art" model="ir.ui.view">
+            <field name="name">product.template.kanban.inherit.art</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_kanban_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='categ_id']" position="after">
+                    <field name="pricelist_price"/>
+                </xpath>
+                <xpath expr="//field[@name='list_price']" position="after">
+                <br/>
+                    List Price: <field name="pricelist_price" widget="monetary" options="{'currency_field': 'currency_id', 'field_digits': True}"/>
                 </xpath>
             </field>
         </record>

@@ -1,12 +1,22 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     products_in_warehouse = fields.Many2many('product.template', compute='_compute_products_in_warehouse', string='Products in Warehouse')
     partner_tags = fields.Many2many(related='partner_id.category_id', string='Partner Tags', readonly=True)
+    picking_states = fields.Char(string='Delivery Status', compute='_compute_picking_states')
+
+    @api.depends('picking_ids.state')
+    def _compute_picking_states(self):
+        for order in self:
+            states = order.picking_ids.mapped('state')
+            # Translate states
+            translated_states = [dict(self.env['stock.picking'].fields_get(allfields=['state'])['state']['selection']).get(s, s) for s in states]
+            # Join unique states
+            order.picking_states = ', '.join(set(translated_states))
 
     @api.depends('warehouse_id')
     def _compute_products_in_warehouse(self):

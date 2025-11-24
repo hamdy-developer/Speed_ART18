@@ -9,6 +9,7 @@
                             <div class="col-4 text-right">
                                 <strong>تاريخ الفاتورة:</strong> <span t-field="o.date_order" t-options="{'format': 'yyyy-MM-dd HH:mm:ss'}"/><br/>
                                 <strong>اسم العميل:</strong> <span t-field="o.partner_id.name"/><br/>
+                           
                                 <strong>العنوان:</strong> <span t-field="o.partner_id.contact_address"/><br/>
                                 <strong>موبيل العميل:</strong> <span t-field="o.partner_id.mobile"/><br/>
                                 <strong>مندوب المبيعات:</strong> <span t-field="o.user_id.name"/>
@@ -72,12 +73,7 @@
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-12">
-                                <strong>تفقيط الفاتوره :</strong>
-                                <span t-esc="o.currency_id.amount_to_text(o.amount_total)"/>
-                            </div>
-                        </div>
+
                         <div style="direction: ltr">
                             <span t-field="o.note"
                                   name="order_note"/>

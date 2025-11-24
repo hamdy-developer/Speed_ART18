@@ -8,6 +8,7 @@
             <!-- Move warehouse_id to the header -->
             <xpath expr="//field[@name='partner_id']" position="after">
                 <field name="partner_tags" widget="many2many_tags"/>
+                <field name="picking_states"/>
                 <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='other_information']/group[1]/group[@name='sale_shipping']/field[@name='warehouse_id'][2]"
                        position="move"/>
                        
@@ -25,6 +26,7 @@
         <field name="arch" type="xml">
             <field name="partner_id" position="after">
                 <field name="partner_tags" widget="many2many_tags" optional="show"/>
+                <field name="picking_states" optional="show"/>
             </field>
         </field>
     </record>
