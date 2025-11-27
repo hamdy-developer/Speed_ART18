@@ -25,29 +25,29 @@
 
                         </div>
 
-                        <table class="table table-sm table-bordered mt-4">
+                        <table class="table table-sm table-bordered mt-4" style="border: 1px solid black;">
                             <thead>
                                 <tr>
-                                    <th class="text-center">م</th>
-                                    <th class="text-center">الكود</th>
-                                    <th class="text-center">اسم الصنف</th>
-                                    <th class="text-center">براند</th>
-                                    <th class="text-center">الكميه</th>
-                                    <th class="text-center">سعر الوحده</th>
-                                    <th class="text-center">الاجمالي</th>
+                                    <th class="text-center" style="border: 1px solid black;">م</th>
+                                    <th class="text-center" style="border: 1px solid black;">الكود</th>
+                                    <th class="text-center" style="border: 1px solid black;">اسم الصنف</th>
+                                    <th class="text-center" style="border: 1px solid black;">براند</th>
+                                    <th class="text-center" style="border: 1px solid black;">الكميه</th>
+                                    <th class="text-center" style="border: 1px solid black;">سعر الوحده</th>
+                                    <th class="text-center" style="border: 1px solid black;">الاجمالي</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <t t-set="i" t-value="1"/>
                                 <t t-foreach="o.order_line" t-as="line">
                                     <tr t-if="line.product_uom_qty">
-                                        <td class="text-center"><t t-esc="i"/></td>
-                                        <td><span t-field="line.product_id.default_code"/></td>
-                                        <td><span t-field="line.name"/></td>
-                                        <td><span t-field="line.product_id.product_brand_id"/></td>
-                                        <td class="text-center"><span t-field="line.product_uom_qty"/></td>
-                                        <td class="text-right"><span t-esc="round(line.price_total,0)/line.product_uom_qty" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
-                                        <td class="text-right"><span t-esc="round(line.price_total,0)" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                        <td class="text-center" style="border: 1px solid black;"><t t-esc="i"/></td>
+                                        <td style="border: 1px solid black;"><span t-field="line.product_id.default_code"/></td>
+                                        <td style="border: 1px solid black;"><span t-field="line.name"/></td>
+                                        <td style="border: 1px solid black;"><span t-field="line.product_id.product_brand_id"/></td>
+                                        <td class="text-center" style="border: 1px solid black;"><span t-esc="int(line.product_uom_qty)"/></td>
+                                        <td class="text-right" style="border: 1px solid black;"><span t-esc="int(line.price_total/line.product_uom_qty)"/></td>
+                                        <td class="text-right" style="border: 1px solid black;"><span t-esc="int(line.price_total)"/></td>
                                     </tr>
                                     <t t-set="i" t-value="i + 1"/>
                                 </t>
@@ -66,30 +66,39 @@
                                     <tr>
                                         <td><strong>الاجمالي</strong></td>
                                         <td class="text-right">
-                                            <span t-esc="round(o.amount_total,0)" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                            <span t-esc="int(o.amount_total)"/>
                                         </td>
                                     </tr>
                                 </table>
                             </div>
                         </div>
 
-
-                        <div style="direction: ltr">
-                            <span t-field="o.note"
-                                  name="order_note"/>
-                            <p t-if="not is_html_empty(o.payment_term_id.note)">
-                                <span t-field="o.payment_term_id.note">The payment should also be transmitted with
-                                    love
-                                </span>
-                            </p>
-                            <div class="oe_structure"/>
+                        <!-- تفقيط المبلغ بالحروف -->
+                        <div class="row" style="margin-top: 15px;">
+                            <div class="col-12" style="text-align: center;">
+                                <t t-set="amount_text" t-value="o.currency_id.with_context(lang='ar_001').amount_to_text(o.amount_total)"/>
+                                <strong>الاجمالي :  </strong>
+                                <span t-esc="amount_text"/>
+                            </div>
                         </div>
 
-                        <div class="row" style="position: fixed; bottom: 50px; width: 100%;">
-                            <div class="col-12 text-center">
-                                <p>عميلنا العزيز لايتم قبول المرتجع الا بأصل الفاتوره وفي خلال 14 يوم فقط من استلام الفاتوره البضاعة امانة لدى العميل لحين سداد قيمتها بالكامل</p>
-                                <p>عقار 9420 ش الدكتور سعيد فهمى من شارع اللواء احمد هميمي الحي الثامن الهضبة الوسطى المقطم ت- 0227239447 - 01144149900-0227258102</p>
+                      
+                    </div>
+                    
+                    <div class="footer" style="position: running(footer);">
+                    <center>
+                      <div class="row" style="margin-top: 20px;">
+                            <div class="col-12" style="direction: ltr;">
+                                <span t-field="o.note" name="order_note"/>
+                                <p t-if="not is_html_empty(o.payment_term_id.note)">
+                                    <span t-field="o.payment_term_id.note">The payment should also be transmitted with love</span>
+                                </p>
                             </div>
+                        </div>
+                        </center>
+                        <div class="text-center" style="padding: 10px 0; border-top: 1px solid #ddd;">
+                            <p style="margin-bottom: 5px; font-size: 11px;">عميلنا العزيز لايتم قبول المرتجع الا بأصل الفاتوره وفي خلال 14 يوم فقط من استلام الفاتوره البضاعة امانة لدى العميل لحين سداد قيمتها بالكامل</p>
+                            <p style="margin-bottom: 0; font-size: 10px;">عقار 9420 ش الدكتور سعيد فهمى من شارع اللواء احمد هميمي الحي الثامن الهضبة الوسطى المقطم ت- 0227239447 - 01144149900-0227258102</p>
                         </div>
                     </div>
                 </t>
