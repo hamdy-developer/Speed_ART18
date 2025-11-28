@@ -51,7 +51,7 @@ class StockPickingInherit(models.Model):
                 'quantity': move.quantity,
                 'product_uom_id': move.product_uom.id,
                 'price_unit': po_line.price_unit,
-                'tax_ids': [(6, 0, po_line.tax_ids.ids)],
+                'tax_ids': [(6, 0, po_line.taxes_id.ids)],
                 'purchase_line_id': po_line.id,
             }))
 
