@@ -2,6 +2,11 @@
 
 from odoo import models, fields, api, _
 
+class SaleOrderLine(models.Model):
+    _inherit = 'sale.order.line'
+
+    products_in_warehouse = fields.Many2many('product.template', string='Products in Warehouse',related='order_id.products_in_warehouse')
+ 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
@@ -52,3 +57,23 @@ class SaleOrder(models.Model):
     def onchange_partner_id_warehouse_id(self):
         self._onchange_warehouse_id_for_tax()
 
+
+class ProductTemplate(models.Model):
+    _inherit = 'product.template'
+
+    @api.model
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        if args is None:
+            args = []
+        domain=['|',('default_code', operator, name),('name', operator, name)]
+        for item in args:
+            domain.append(item)
+        print('11111111',args)
+        print('22222222',type(args))
+        print('domaindomaindomaindomain',domain)
+        print("dddddddddddd",super().name_search(name, domain, operator, limit))
+        products=self.search(domain, limit=limit)
+        list_products=super().name_search(name, args, operator, limit)
+        list_products+=[(product.id, product.display_name) for product in products.sudo()]
+        print("list_productslist_products",list_products)
+        return list_products
