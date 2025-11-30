@@ -67,13 +67,8 @@ class ProductTemplate(models.Model):
             args = []
         domain=['|',('default_code', operator, name),('name', operator, name)]
         for item in args:
-            domain.append(item)
-        print('11111111',args)
-        print('22222222',type(args))
-        print('domaindomaindomaindomain',domain)
-        print("dddddddddddd",super().name_search(name, domain, operator, limit))
+            domain.append(item)      
         products=self.search(domain, limit=limit)
         list_products=super().name_search(name, args, operator, limit)
         list_products+=[(product.id, product.display_name) for product in products.sudo()]
-        print("list_productslist_products",list_products)
         return list_products
