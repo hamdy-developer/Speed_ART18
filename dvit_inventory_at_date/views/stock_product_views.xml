@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="inventory_at_date_view_tree" model="ir.ui.view">
+            <field name="name">product.product.tree</field>
+            <field name="model">product.product</field>
+            <field name="arch" type="xml">
+                <list string="Product Variants" duplicate="false">
+                    <header>
+                        <button string="Print Labels" type="object" name="action_open_label_layout"/>
+                    </header>
+                    <field name="default_code" optional="show" readonly="1"/>
+                    <field name="barcode" optional="hide" readonly="1"/>
+                    <field name="name" readonly="1"/>
+                    <field name="product_template_variant_value_ids" widget="many2many_tags"
+                           groups="product.group_product_variant" readonly="1"/>
+                    <field name="company_id" groups="base.group_multi_company" optional="hide" readonly="1"/>
+                    <field name="lst_price" optional="show" string="Sales Price"/>
+                    <field name="standard_price" optional="show"/>
+                    <field name="categ_id" optional="hide"/>
+                    <field name="product_tag_ids" widget="many2many_tags"
+                           options="{'color_field': 'color', 'no_edit_color': 1}" optional="hide"/>
+                    <field name="type" optional="hide" readonly="1"/>
+                    <field name="qty_available"  optional="show"
+                           decoration-danger="virtual_available &lt; 0" decoration-warning="virtual_available == 0"
+                           decoration-bf="1" groups="stock.group_stock_user"/>
+                    <field name="virtual_available" 
+                           string="Forecasted Quantity" optional="show" decoration-danger="virtual_available &lt; 0"
+                           decoration-warning="virtual_available == 0" groups="stock.group_stock_user"/>
+                    <field name="total_cost" 
+                           string="Total Cost" optional="show" sum="Sum of Total Cost"/>
+                    <field name="total_sale_price" 
+                           string="Total Sale Price" optional="show"/>
+
+                    <field name="uom_id" options="{'no_open': True, 'no_create': True}" groups="uom.group_uom"
+                           optional="show" readonly="1"/>
+                    <field name="product_tmpl_id" invisible="1" readonly="1"/>
+                    <field name="active" invisible="1"/>
+                </list>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="product_inventory_at_date_view_tree">
+            <field name="name">Inventory At Date tree</field>
+            <field name="model">stock.quant</field>
+            <field name="arch" type="xml">
+                <list sample="1" create="0" edit="0">
+                    <field name="product_id" invisible="context.get('single_product', False)"/>
+                    <field name="location_id" invisible="context.get('hide_location', False)"/>
+                    <field name="lot_id" groups="stock.group_production_lot"
+                           invisible="context.get('hide_lot', False)"/>
+                    <field name="package_id" groups="stock.group_tracking_lot"/>
+                    <field name="owner_id" groups="stock.group_tracking_owner"/>
+                    <field name="available_quantity"/>
+                    <field name="quantity" string="On Hand Quantity"/>
+                    <field name="product_uom_id" groups="uom.group_uom"/>
+                    <field name='company_id' groups="base.group_multi_company"/>
+                </list>
+            </field>
+        </record>
+        <record model="ir.actions.server" id="action_view_inventory_at_date"> <!-- Menu + python -->
+            <field name="name">Inventory At Date</field>
+            <field name="model_id" ref="stock.model_stock_quant"/>
+            <field name="state">code</field>
+            <!--        <field name="groups_id" eval="[(4, ref('stock.group_stock_user'))]"/>-->
+            <field name="code">
+                action = model.with_context(
+                search_default_internal_loc=1,
+                always_show_loc=1,
+                )._get_inventory_at_date_action()
+            </field>
+        </record>
+
+
+        <menuitem id="menu_inventory_at_date" name="Inventory At Date"
+                  action="dvit_inventory_at_date.action_view_inventory_at_date"
+                  parent="stock.menu_warehouse_report" sequence="6"/>
+
+    </data>
+</odoo>
