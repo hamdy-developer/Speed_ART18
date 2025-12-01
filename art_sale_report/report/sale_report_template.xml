@@ -46,8 +46,8 @@
                                         <td style="border: 1px solid black;"><span t-field="line.name"/></td>
                                         <td style="border: 1px solid black;"><span t-field="line.product_id.product_brand_id"/></td>
                                         <td class="text-center" style="border: 1px solid black;"><span t-esc="int(line.product_uom_qty)"/></td>
-                                        <td class="text-right" style="border: 1px solid black;"><span t-esc="int(line.price_total/line.product_uom_qty)"/></td>
-                                        <td class="text-right" style="border: 1px solid black;"><span t-esc="int(line.price_total)"/></td>
+                                        <td class="text-right" style="border: 1px solid black;"><span t-esc="o.currency_id.format(line.price_total/line.product_uom_qty)"/></td>
+                                        <td class="text-right" style="border: 1px solid black;"><span t-field="line.price_total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
                                     </tr>
                                     <t t-set="i" t-value="i + 1"/>
                                 </t>
@@ -63,10 +63,25 @@
                         <div class="row justify-content-end">
                             <div class="col-4">
                                 <table class="table table-sm">
+                                    <!-- عرض التفاصيل فقط إذا كان هناك تخفيض -->
+                                    <t t-if="total_discount > 0.01">
+                                        <tr>
+                                            <td><strong>الإجمالي قبل التخفيض</strong></td>
+                                            <td class="text-right">
+                                                <span t-esc="o.currency_id.format(total_gross)"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>إجمالي التخفيض</strong></td>
+                                            <td class="text-right" style="color: red;">
+                                                <span t-esc="o.currency_id.format(total_discount)"/>
+                                            </td>
+                                        </tr>
+                                    </t>
                                     <tr>
-                                        <td><strong>الاجمالي</strong></td>
+                                        <td><strong>الإجمالي</strong></td>
                                         <td class="text-right">
-                                            <span t-esc="int(o.amount_total)"/>
+                                            <span t-field="o.amount_total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
                                         </td>
                                     </tr>
                                 </table>
