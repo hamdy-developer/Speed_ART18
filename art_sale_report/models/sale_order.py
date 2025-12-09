@@ -2,11 +2,6 @@
 
 from odoo import models, fields, api, _
 
-class ResPartner(models.Model):
-    _inherit = 'res.partner'
-
-    total_all_due = fields.Float()
-    has_moves = fields.Boolean()
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
