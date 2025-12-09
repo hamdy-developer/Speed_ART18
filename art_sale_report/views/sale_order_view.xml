@@ -12,15 +12,22 @@
                 <field name="products_in_warehouse" invisible="1"/>
                 <xpath expr="//form[1]/sheet[1]/notebook[1]/page[@name='other_information']/group[1]/group[@name='sale_shipping']/field[@name='warehouse_id'][2]"
                        position="move"/>
-                       
+
             </xpath>
-           <xpath expr="//field[@name='order_line']/list/field[@name='product_template_id']" position="after"> 
-           <field name="products_in_warehouse" column_invisible="1"/>
-           </xpath>
-           <xpath expr="//field[@name='order_line']/list/field[@name='product_template_id']" position="attributes"> 
-                 <attribute name="domain">[('sale_ok', '=', True),('id', 'in',products_in_warehouse)]</attribute>
-        </xpath> 
-           
+            <xpath expr="//group/group[2]" position="inside">
+                <xpath expr="//field[@name='user_id']" position="move"/>
+            </xpath>
+            <xpath expr="//field[@name='user_id']" position="attributes">
+                <attribute name="readonly">1</attribute>
+                <attribute name="force_save">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='product_template_id']" position="after">
+                <field name="products_in_warehouse" column_invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='product_template_id']" position="attributes">
+                <attribute name="domain">[('sale_ok', '=', True),('id', 'in',products_in_warehouse)]</attribute>
+            </xpath>
+
         </field>
     </record>
 

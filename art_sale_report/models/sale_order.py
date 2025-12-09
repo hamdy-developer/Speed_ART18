@@ -2,6 +2,11 @@
 
 from odoo import models, fields, api, _
 
+class ResPartner(models.Model):
+    _inherit = 'res.partner'
+
+    total_all_due = fields.Float()
+    has_moves = fields.Boolean()
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
@@ -56,6 +61,8 @@ class SaleOrder(models.Model):
     @api.onchange('partner_id')
     def onchange_partner_id_warehouse_id(self):
         self._onchange_warehouse_id_for_tax()
+        if self.partner_id and self.partner_id.user_id:
+            self.user_id = self.partner_id.user_id
 
 
 class ProductTemplate(models.Model):
