@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_product_template_editor,product.template.editor,product.model_product_template,edit_accses.group_product_contact_editor,1,1,1,1
+
+mrp.access_product_template_mrp_manager,product.template mrp_manager,product.model_product_template,mrp.group_mrp_manager,1,0,0,0
+stock.access_product_template_stock_manager,product.template stock_manager,product.model_product_template,stock.group_stock_manager,1,0,0,0
+product.access_product_template_manager,product.template.manager,product.model_product_template,product.group_product_manager,1,0,0,0
+
+access_res_partner_editor,res.partner.editor,base.model_res_partner,edit_accses.group_product_contact_editor,1,1,1,1
+
+mrp.access_product_group_res_partner_mrp_manager,res_partner group_mrp_manager,base.model_res_partner,mrp.group_mrp_manager,1,0,0,0
+stock.access_product_group_res_partner_stock_manager,res_partner group_stock_manager,base.model_res_partner,stock.group_stock_manager,1,0,0,0
