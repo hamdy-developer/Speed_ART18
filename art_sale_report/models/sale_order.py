@@ -70,5 +70,6 @@ class ProductTemplate(models.Model):
             domain.append(item)      
         products=self.search(domain, limit=limit)
         list_products=super().name_search(name, args, operator, limit)
-        list_products+=[(product.id, product.display_name) for product in products.sudo()]
+        print('list_products', list_products)
+        # list_products += [(product.id, product.display_name) for product in products.sudo()]
         return list_products
