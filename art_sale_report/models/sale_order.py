@@ -1,16 +1,21 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api, _
+from odoo.osv import expression
+
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
-    products_in_warehouse = fields.Many2many('product.template', string='Products in Warehouse',related='order_id.products_in_warehouse')
- 
+    products_in_warehouse = fields.Many2many('product.template', string='Products in Warehouse',
+                                             related='order_id.products_in_warehouse')
+
+
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    products_in_warehouse = fields.Many2many('product.template', compute='_compute_products_in_warehouse', string='Products in Warehouse')
+    products_in_warehouse = fields.Many2many('product.template', compute='_compute_products_in_warehouse',
+                                             string='Products in Warehouse')
     partner_tags = fields.Many2many(related='partner_id.category_id', string='Partner Tags', readonly=True)
     picking_states = fields.Char(string='Delivery Status', compute='_compute_picking_states')
 
@@ -19,7 +24,9 @@ class SaleOrder(models.Model):
         for order in self:
             states = order.picking_ids.mapped('state')
             # Translate states
-            translated_states = [dict(self.env['stock.picking'].fields_get(allfields=['state'])['state']['selection']).get(s, s) for s in states]
+            translated_states = [
+                dict(self.env['stock.picking'].fields_get(allfields=['state'])['state']['selection']).get(s, s) for s in
+                states]
             # Join unique states
             order.picking_states = ', '.join(set(translated_states))
 
@@ -51,7 +58,8 @@ class SaleOrder(models.Model):
         else:
             if self.fiscal_position_id and self.fiscal_position_id.id == tax_free_fp.id:
                 # Revert to the default fiscal position for the partner
-                self.fiscal_position_id = self.env['account.fiscal.position']._get_fiscal_position(self.partner_id, self.partner_shipping_id)
+                self.fiscal_position_id = self.env['account.fiscal.position']._get_fiscal_position(self.partner_id,
+                                                                                                   self.partner_shipping_id)
 
     @api.onchange('partner_id')
     def onchange_partner_id_warehouse_id(self):
@@ -65,19 +73,8 @@ class ProductTemplate(models.Model):
 
     @api.model
     def name_search(self, name='', args=None, operator='ilike', limit=100):
-        if args is None:
-            args = []
-        domain=['|',('default_code', operator, name),('name', operator, name)]
-        for item in args:
-            domain.append(item)
-        products=self.search(domain, limit=limit)
-        list_products=super().name_search(name, args, operator, limit)
-        list_products += [(product.id, product.display_name) for product in products.sudo()]
-
-        seen_ids = set()
-        result = []
-        for pid, display_name in list_products:
-            if pid not in seen_ids:
-                seen_ids.add(pid)
-                result.append((pid, display_name))
-        return result
+        args = args or []
+        domain = ['|', '|', ('name', operator, name), ('default_code', operator, name), ('barcode', operator, name)]
+        # استخدام self.search لتجنب مشاكل التكرار وإرجاع النتائج بتنسيق صحيح
+        products = self.search(expression.AND([domain, args]), limit=limit)
+        return [(product.id, product.display_name) for product in products]
