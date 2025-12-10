@@ -69,9 +69,15 @@ class ProductTemplate(models.Model):
             args = []
         domain=['|',('default_code', operator, name),('name', operator, name)]
         for item in args:
-            domain.append(item)      
+            domain.append(item)
         products=self.search(domain, limit=limit)
         list_products=super().name_search(name, args, operator, limit)
-        print('list_products', list_products)
-        # list_products += [(product.id, product.display_name) for product in products.sudo()]
-        return list_products
+        list_products += [(product.id, product.display_name) for product in products.sudo()]
+
+        seen_ids = set()
+        result = []
+        for pid, display_name in list_products:
+            if pid not in seen_ids:
+                seen_ids.add(pid)
+                result.append((pid, display_name))
+        return result
