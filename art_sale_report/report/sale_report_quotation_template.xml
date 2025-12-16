@@ -7,9 +7,7 @@
                     <div class="page" style="direction: rtl;font-size: 90%">
                         <div class="row">
                             <div class="col-4 text-right">
-                                <t t-set="is_quotation" t-value="o.state == 'draft'"/>
-                                <strong t-if="is_quotation">تاريخ عرض السعر:</strong>
-                                <strong t-if="not is_quotation">تاريخ الفاتورة:</strong>
+                                <strong>تاريخ عرض السعر:</strong>
                                 <span t-field="o.date_order" t-options="{'format': 'yyyy-MM-dd HH:mm:ss'}"/><br/>
                                 <strong>اسم العميل:</strong> <span t-field="o.partner_id.name"/><br/>
                            
@@ -19,9 +17,7 @@
                             </div>
 
                             <div class="col-4 text-center">
-                                <t t-set="is_quotation" t-value="o.state == 'draft'"/>
-                                <h2 t-if="is_quotation">عرض سعر رقم</h2>
-                                <h2 t-if="not is_quotation">فاتورة رقم</h2>
+                                <h2>عرض سعر رقم</h2>
                                 <h3><span t-field="o.name"/></h3>
                             </div>
                             <div class="col-4">

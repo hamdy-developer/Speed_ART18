@@ -10,22 +10,13 @@ class SaleOrderLine(models.Model):
 
     def _custom_round(self, value):
         """
-        Custom rounding function:
-        - If decimal part < 0.50: round down to whole number (floor)
-        - If decimal part >= 0.50: use ROUND_HALF_UP (rounding half away from zero)
+        Custom rounding function: Round to nearest whole number (round up or down whichever is closer)
         """
         if value == 0.0:
             return 0.0
         
-        # Get the decimal part
-        decimal_part = abs(value) - math.floor(abs(value))
-        
-        if decimal_part < 0.50:
-            # Round down to whole number
-            return math.floor(value) if value >= 0 else math.ceil(value)
-        else:
-            # Use ROUND_HALF_UP (rounding half away from zero)
-            return float(Decimal(str(value)).quantize(Decimal('1'), rounding=ROUND_HALF_UP))
+        # Simple round to nearest whole number
+        return round(value)
 
     @api.depends('product_uom_qty', 'discount', 'price_unit', 'tax_id')
     def _compute_amount(self):
@@ -39,13 +30,12 @@ class SaleOrderLine(models.Model):
             # Get raw values from tax computation
             raw_subtotal = base_line['tax_details']['raw_total_excluded_currency']
             raw_total = base_line['tax_details']['raw_total_included_currency']
+            raw_tax = raw_total - raw_subtotal
             
-            # Apply custom rounding
+            # Apply custom rounding to all values
             line.price_subtotal = self._custom_round(raw_subtotal or 0.0)
+            line.price_tax = self._custom_round(raw_tax or 0.0)
             line.price_total = self._custom_round(raw_total or 0.0)
-            
-            # Calculate price_tax from rounded values
-            line.price_tax = line.price_total - line.price_subtotal
 
     # def _compute_amount(self):
     #     """
