@@ -15,13 +15,25 @@
             <field name="dpi">90</field>
         </record>
 
-        <record id="action_report_saleorder_art" model="ir.actions.report">
+<!--        <record id="action_report_saleorder_art" model="ir.actions.report">-->
+<!--            <field name="name">ART Sale Order</field>-->
+<!--            <field name="model">sale.order</field>-->
+<!--            <field name="report_type">qweb-pdf</field>-->
+<!--            <field name="report_name">art_sale_report.report_saleorder_art_template</field>-->
+<!--            <field name="report_file">art_sale_report.report_saleorder_art_template</field>-->
+<!--            <field name="print_report_name">'ART Sale Order - %s' % (object.name)</field>-->
+<!--            <field name="binding_model_id" ref="sale.model_sale_order"/>-->
+<!--            <field name="paperformat_id" ref="art_sale_report.paperformat_art_sale_report"/>-->
+<!--            <field name="binding_type">report</field>-->
+<!--        </record>-->
+
+        <record id="action_report_saleorder_art_quotation" model="ir.actions.report">
             <field name="name">ART Sale Order</field>
             <field name="model">sale.order</field>
             <field name="report_type">qweb-pdf</field>
-            <field name="report_name">art_sale_report.report_saleorder_art_template</field>
-            <field name="report_file">art_sale_report.report_saleorder_art_template</field>
-            <field name="print_report_name">'ART Sale Order - %s' % (object.name)</field>
+            <field name="report_name">art_sale_report.report_saleorder_art_quotation_template</field>
+            <field name="report_file">art_sale_report.report_saleorder_art_quotation_template</field>
+            <field name="print_report_name">'ART Quotation Order - %s' % (object.name)</field>
             <field name="binding_model_id" ref="sale.model_sale_order"/>
             <field name="paperformat_id" ref="art_sale_report.paperformat_art_sale_report"/>
             <field name="binding_type">report</field>

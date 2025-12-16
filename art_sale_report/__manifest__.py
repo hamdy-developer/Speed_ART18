@@ -10,6 +10,7 @@
         'data/fiscal_position_data.xml',
         'report/sale_report.xml',
         'report/sale_report_template.xml',
+        'report/sale_report_quotation_template.xml',
         'views/product_views.xml',
         'views/sale_order_view.xml',
         'views/sale_menus.xml',

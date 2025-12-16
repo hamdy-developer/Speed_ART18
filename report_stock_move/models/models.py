@@ -36,8 +36,7 @@ class ItemCardWithCost(models.TransientModel):
     date_to = fields.Datetime(string="Date To", required=True, )
     location_ids = fields.Many2many(comodel_name="stock.location", string="Locations",
                                     domain=[('usage', '=', 'internal')])
-    product_ids = fields.Many2many(comodel_name="product.product", string="Products",
-                                   domain=[('tracking', '!=', 'none')])
+    product_ids = fields.Many2many(comodel_name="product.product", string="Products",)
 
     # --- NEW FIELD ---
     lot_ids = fields.Many2many(
