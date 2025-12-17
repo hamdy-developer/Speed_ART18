@@ -4,7 +4,7 @@
     'summary': 'Custom rounding for sale order amounts',
     'description': 'This module applies rounding to price_total in sale.order.line and amount_total in sale.order, and ensures it is reflected in reports.',
     'author': 'Speed',
-    'depends': ['sale', 'account', 'purchase', 'stock'],
+    'depends': ['sale', 'account', 'purchase', 'stock', 'art_sale_report'],
     'data': [
         'security/ir.model.access.csv',
         'views/stock_warehouse_views.xml',
