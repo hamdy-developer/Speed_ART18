@@ -39,26 +39,33 @@
                             </thead>
                             <tbody>
                                 <t t-set="i" t-value="1"/>
+                                <t t-set="total_before_discount" t-value="0"/>
                                 <t t-foreach="o.order_line" t-as="line">
+                                    <!-- حساب نسبة الضريبة للسطر -->
+                                    <t t-set="tax_rate" t-value="sum(line.tax_id.mapped('amount')) / 100.0 if line.tax_id else 0"/>
+                                    <!-- سعر الوحدة الأصلي شامل الضريبة -->
+                                    <t t-set="unit_price_with_tax" t-value="line.price_unit * (1 + tax_rate)"/>
+                                    <!-- إجمالي السطر قبل الخصم شامل الضريبة -->
+                                    <t t-set="line_total_before_discount" t-value="unit_price_with_tax * line.product_uom_qty"/>
+                                    <t t-set="total_before_discount" t-value="total_before_discount + line_total_before_discount"/>
                                     <tr t-if="line.product_uom_qty">
                                         <td class="text-center" style="border: 1px solid black;"><t t-esc="i"/></td>
                                         <td style="border: 1px solid black;"><span t-field="line.product_id.default_code"/></td>
                                         <td style="border: 1px solid black;"><span t-field="line.name"/></td>
                                         <td style="border: 1px solid black;"><span t-field="line.product_id.product_brand_id"/></td>
                                         <td class="text-center" style="border: 1px solid black;"><span t-esc="int(line.product_uom_qty)"/></td>
-                                        <td class="text-right" style="border: 1px solid black;"><span t-esc="o.currency_id.format(line.price_total/line.product_uom_qty)"/></td>
-                                        <td class="text-right" style="border: 1px solid black;"><span t-field="line.price_total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                        <!-- سعر الوحدة الأصلي شامل الضريبة -->
+                                        <td class="text-right" style="border: 1px solid black;"><span t-esc="o.currency_id.format(unit_price_with_tax)"/></td>
+                                        <!-- إجمالي السطر قبل الخصم -->
+                                        <td class="text-right" style="border: 1px solid black;"><span t-esc="o.currency_id.format(line_total_before_discount)"/></td>
                                     </tr>
                                     <t t-set="i" t-value="i + 1"/>
                                 </t>
                             </tbody>
                         </table>
 
-                        <t t-set="total_gross" t-value="0"/>
-                        <t t-foreach="o.order_line" t-as="line_calc">
-                            <t t-set="total_gross" t-value="total_gross + (line_calc.price_unit * line_calc.product_uom_qty)"/>
-                        </t>
-                        <t t-set="total_discount" t-value="total_gross - o.amount_untaxed"/>
+                        <!-- حساب إجمالي الخصم = الإجمالي قبل الخصم - الإجمالي النهائي -->
+                        <t t-set="total_discount" t-value="total_before_discount - o.amount_total"/>
 
                         <div class="row justify-content-end">
                             <div class="col-4">
@@ -68,7 +75,7 @@
                                         <tr>
                                             <td><strong>الإجمالي قبل التخفيض</strong></td>
                                             <td class="text-right">
-                                                <span t-esc="o.currency_id.format(o.amount_total +total_discount)"/>
+                                                <span t-esc="o.currency_id.format(total_before_discount)"/>
                                             </td>
                                         </tr>
                                         <tr>
