@@ -55,9 +55,9 @@
                                         <td style="border: 1px solid black;"><span t-field="line.product_id.product_brand_id"/></td>
                                         <td class="text-center" style="border: 1px solid black;"><span t-esc="int(line.product_uom_qty)"/></td>
                                         <!-- سعر الوحدة الأصلي شامل الضريبة -->
-                                        <td class="text-right" style="border: 1px solid black;"><span t-esc="o.currency_id.format(unit_price_with_tax)"/></td>
+                                        <td class="text-right" style="border: 1px solid black;"><span t-esc="o.currency_id.format(line.price_total_no_discount / line.product_uom_qty)"/></td>
                                         <!-- إجمالي السطر قبل الخصم -->
-                                        <td class="text-right" style="border: 1px solid black;"><span t-esc="o.currency_id.format(line_total_before_discount)"/></td>
+                                        <td class="text-right" style="border: 1px solid black;"><span t-esc="o.currency_id.format(line.price_total_no_discount)"/></td>
                                     </tr>
                                     <t t-set="i" t-value="i + 1"/>
                                 </t>
