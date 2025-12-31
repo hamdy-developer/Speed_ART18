@@ -46,21 +46,24 @@ class SaleOrder(models.Model):
             "order_line.price_subtotal_no_discount",
             "order_line.price_total_no_discount",
         ]
-
+    @
     @api.depends(lambda self: self._get_compute_discount_total_depends())
     def _compute_discount_total(self):
         for order in self:
             order.is_run=True
-            order.order_line._compute_amount()
+            order.order_line._update_discount_display_fields()
             discount_total = sum(order.order_line.mapped("discount_total"))
             print('1111111111111111111',discount_total)
             discount_subtotal = sum(order.order_line.mapped("discount_subtotal"))
+            print('2222222222222222222',discount_subtotal)
             price_subtotal_no_discount = sum(
                 order.order_line.mapped("price_subtotal_no_discount")
             )
+            print('3333333333333333333',price_subtotal_no_discount)
             price_total_no_discount = sum(
                 order.order_line.mapped("price_total_no_discount")
             )
+            print('4444444444444444444',price_total_no_discount)
             order.update(
                 {
                     "discount_total": discount_total,

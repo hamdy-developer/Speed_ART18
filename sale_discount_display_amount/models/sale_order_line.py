@@ -31,11 +31,13 @@ class SaleOrderLine(models.Model):
     )
 
     def _update_discount_display_fields(self):
+        print("_update_discount_display_fields")
         for line in self:
             line.price_subtotal_no_discount = 0
             line.price_total_no_discount = 0
             line.discount_total = 0
             if not line.discount:
+                print('33333333333',line.price_subtotal)
                 line.price_subtotal_no_discount = line.price_subtotal
                 line.price_total_no_discount = line.price_total
                 continue
@@ -52,7 +54,7 @@ class SaleOrderLine(models.Model):
             price_total_no_discount = taxes["total_included"]
             discount_total = price_total_no_discount - line.price_total
             discount_subtotal = price_subtotal_no_discount - line.price_subtotal
-
+            print('2222222222222',discount_total)
             line.update(
                 {
                     "discount_total": discount_total,
