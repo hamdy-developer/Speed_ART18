@@ -75,7 +75,7 @@
                                         <tr>
                                             <td><strong>الإجمالي قبل التخفيض</strong></td>
                                             <td class="text-right">
-                                                <span t-esc="o.currency_id.format(o.discount_total+o.amount_total)"/>
+                                                <span t-esc="o.currency_id.format(o.price_total_no_discount)"/>
                                             </td>
                                         </tr>
                                         <tr>
