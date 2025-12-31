@@ -40,6 +40,7 @@
                         <div class="d-flex" invisible="not display_discount_with_tax">
                             <label for="discount_total" />
                             <field name="discount_total" nolabel="1" />
+                            <field name="is_run" invisible="1"/>
                         </div>
                     </group>
                 </xpath>

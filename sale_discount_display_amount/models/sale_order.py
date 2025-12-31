@@ -12,6 +12,7 @@ class SaleOrder(models.Model):
         help="Check this field to show the Discount with TAX",
         related="company_id.display_discount_with_tax",
     )
+    is_run=fields.Boolean(default=False,compute="_compute_discount_total")
     discount_total = fields.Monetary(
         compute="_compute_discount_total",
         name="Discount total",
@@ -49,7 +50,10 @@ class SaleOrder(models.Model):
     @api.depends(lambda self: self._get_compute_discount_total_depends())
     def _compute_discount_total(self):
         for order in self:
+            order.is_run=True
+            order.order_line._compute_amount()
             discount_total = sum(order.order_line.mapped("discount_total"))
+            print('1111111111111111111',discount_total)
             discount_subtotal = sum(order.order_line.mapped("discount_subtotal"))
             price_subtotal_no_discount = sum(
                 order.order_line.mapped("price_subtotal_no_discount")
