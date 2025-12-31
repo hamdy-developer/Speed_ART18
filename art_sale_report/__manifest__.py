@@ -4,7 +4,7 @@
     'summary': 'Custom sale order report for Arab Royal Trading',
     'description': 'This module provides a custom sale order report in the format requested by ART.',
     'author': 'Gemini',
-    'depends': ['sale', 'product', 'stock', 'account', 'sale_stock', 'purchase'],
+    'depends': ['sale', 'product', 'stock', 'account', 'sale_stock', 'purchase','sale_discount_display_amount'],
     'data': [
         'security/ir.model.access.csv',
         'data/fiscal_position_data.xml',
