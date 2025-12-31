@@ -46,7 +46,7 @@ class SaleOrder(models.Model):
             "order_line.price_subtotal_no_discount",
             "order_line.price_total_no_discount",
         ]
-    @
+    
     @api.depends(lambda self: self._get_compute_discount_total_depends())
     def _compute_discount_total(self):
         for order in self:
