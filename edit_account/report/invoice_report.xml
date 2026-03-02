@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="paperformat_art_invoice_report" model="report.paperformat">
+            <field name="name">ART Invoice Format</field>
+            <field name="default" eval="True" />
+            <field name="format">A4</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">25</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">0</field>
+            <field name="dpi">90</field>
+        </record>
+
+       <record id="action_report_invoice_art" model="ir.actions.report">
+           <field name="name">ART Invoice</field>
+           <field name="model">account.move</field>
+           <field name="report_type">qweb-pdf</field>
+           <field name="report_name">edit_account.report_invoice_art_template</field>
+           <field name="report_file">edit_account.report_invoice_art_template</field>
+           <field name="print_report_name">'ART Invoice - %s' % (object.name or object.id)</field>
+           <field name="binding_model_id" ref="account.model_account_move"/>
+           <field name="paperformat_id" ref="edit_account.paperformat_art_invoice_report"/>
+           <field name="binding_type">report</field>
+       </record>
+    </data>
+</odoo>

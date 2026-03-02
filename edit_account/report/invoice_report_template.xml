@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_invoice_art_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.basic_layout">
+                    <div class="page" style="direction: rtl;font-size: 90%">
+                        <div class="row">
+                            <div class="col-4 text-right">
+                                <strong>تاريخ الفاتورة:</strong> <span t-field="o.invoice_date" t-options="{'format': 'yyyy-MM-dd'}"/><br/>
+                                <strong>اسم العميل:</strong> <span t-field="o.partner_id.name"/><br/>
+                           
+                                <strong>العنوان:</strong> <span t-field="o.partner_id.contact_address"/><br/>
+                                <strong>موبيل العميل:</strong> <span t-field="o.partner_id.mobile"/><br/>
+                                <strong>مندوب المبيعات:</strong> <span t-field="o.invoice_user_id.name"/>
+                            </div>
+
+                            <div class="col-4 text-center">
+                                <h2>فاتورة رقم</h2>
+                                <h3><span t-field="o.name"/></h3>
+                            </div>
+                            <div class="col-4">
+                                <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="max-height: 170px;" alt="Logo"/>
+                            </div>
+
+                        </div>
+
+                        <table class="table table-sm table-bordered mt-4" style="border: 1px solid black;">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="border: 1px solid black;">م</th>
+                                    <th class="text-center" style="border: 1px solid black;">الكود</th>
+                                    <th class="text-center" style="border: 1px solid black;">اسم الصنف</th>
+                                    <th class="text-center" style="border: 1px solid black;">براند</th>
+                                    <th class="text-center" style="border: 1px solid black;">الكميه</th>
+                                    <th class="text-center" style="border: 1px solid black;">سعر الوحده</th>
+                                    <th class="text-center" style="border: 1px solid black;">الاجمالي</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="i" t-value="1"/>
+                                <t t-foreach="o.invoice_line_ids.filtered(lambda l: l.display_type == 'product')" t-as="line">
+                                    <tr t-if="line.quantity">
+                                        <td class="text-center" style="border: 1px solid black;"><t t-esc="i"/></td>
+                                        <td style="border: 1px solid black;"><span t-field="line.product_id.default_code"/></td>
+                                        <td style="border: 1px solid black;"><span t-field="line.name"/></td>
+                                        <td style="border: 1px solid black;"><span t-field="line.product_id.product_brand_id"/></td>
+                                        <td class="text-center" style="border: 1px solid black;"><span t-esc="int(line.quantity)"/></td>
+                                        <!-- سعر الوحدة الأصلي شامل الضريبة -->
+                                        <td class="text-right" style="border: 1px solid black;">
+                                            <span t-esc="o.currency_id.format(line.price_total_no_discount / line.quantity) if line.quantity else 0"/>
+                                        </td>
+                                        <!-- إجمالي السطر قبل الخصم -->
+                                        <td class="text-right" style="border: 1px solid black;"><span t-esc="o.currency_id.format(line.price_total_no_discount)"/></td>
+                                    </tr>
+                                    <t t-set="i" t-value="i + 1"/>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <div class="row justify-content-end">
+                            <div class="col-4">
+                                <table class="table table-sm">
+                                    <!-- عرض التفاصيل فقط إذا كان هناك تخفيض -->
+                                    <t t-if="o.discount_total > 0.01">
+                                        <tr>
+                                            <td><strong>الإجمالي قبل التخفيض</strong></td>
+                                            <td class="text-right">
+                                                <span t-esc="o.currency_id.format(o.price_total_no_discount)"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>إجمالي التخفيض</strong></td>
+                                            <td class="text-right" style="color: red;">
+                                                <span t-field="o.discount_total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <tr>
+                                        <td><strong>الإجمالي</strong></td>
+                                        <td class="text-right">
+                                            <span t-field="o.amount_total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- تفقيط المبلغ بالحروف -->
+                        <div class="row" style="margin-top: 15px;">
+                            <div class="col-12" style="text-align: center;">
+                                <t t-set="amount_text" t-value="o.currency_id.with_context(lang='ar_001').amount_to_text(o.amount_total)"/>
+                                <strong>الاجمالي :  </strong>
+                                <span t-esc="amount_text"/>
+                            </div>
+                        </div>
+
+                      
+                    </div>
+                    
+                    <div class="footer" style="position: running(footer);">
+                    <center>
+                      <div class="row" style="margin-top: 20px;">
+                            <div class="col-12" style="direction: ltr;">
+                                <span t-field="o.narration" name="order_note"/>
+                                <p t-if="not is_html_empty(o.invoice_payment_term_id.note)">
+                                    <span t-field="o.invoice_payment_term_id.note"/>
+                                </p>
+                            </div>
+                        </div>
+                        </center>
+                        <div class="text-center" style="padding: 10px 0; border-top: 1px solid #ddd;">
+                            <p style="margin-bottom: 5px; font-size: 11px;">عميلنا العزيز لايتم قبول المرتجع الا بأصل الفاتوره وفي خلال 14 يوم فقط من استلام الفاتوره البضاعة امانة لدى العميل لحين سداد قيمتها بالكامل</p>
+                            <p style="margin-bottom: 0; font-size: 10px;">عقار 9420 ش الدكتور سعيد فهمى من شارع اللواء احمد هميمي الحي الثامن الهضبة الوسطى المقطم ت- 0227239447 - 01144149900-0227258102</p>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

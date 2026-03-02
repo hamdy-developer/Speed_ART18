@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+       <record id="action_report_bank_statement_line_art" model="ir.actions.report">
+           <field name="name">ART Bank Statement Line</field>
+           <field name="model">account.bank.statement.line</field>
+           <field name="report_type">qweb-pdf</field>
+           <field name="report_name">edit_account.report_bank_statement_line_art_template</field>
+           <field name="report_file">edit_account.report_bank_statement_line_art_template</field>
+           <field name="print_report_name">'Bank Line - %s' % (object.payment_ref or object.id)</field>
+           <field name="binding_model_id" ref="account.model_account_bank_statement_line"/>
+           <field name="paperformat_id" ref="edit_account.paperformat_art_invoice_report"/>
+           <field name="binding_type">report</field>
+       </record>
+    </data>
+</odoo>
