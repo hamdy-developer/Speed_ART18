@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="purchase_order_form_inherit_edit_purchase" model="ir.ui.view">
+        <field name="name">purchase.order.form.inherit.edit_purchase</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/list/field[@name='product_id']" position="after">
+                <field name="x_warehouse_id" column_invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='product_id']" position="attributes">
+                <attribute name="domain">['|', ('product_tag_ids.warehouse_id', '=', x_warehouse_id), ('product_tag_ids.warehouse_id', '=', False)]</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>
