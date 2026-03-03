@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_warehouse_inherit_speed_warehouse_tax" model="ir.ui.view">
+        <field name="name">stock.warehouse.form.inherit.speed.warehouse.tax</field>
+        <field name="model">stock.warehouse</field>
+        <field name="inherit_id" ref="stock.view_warehouse"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='warehouse_config']" position="inside">
+                <group string="Taxes">
+                    <group>
+                        <field name="force_warehouse_taxes"/>
+                        <field name="sale_tax_ids" widget="many2many_tags" invisible="not force_warehouse_taxes"/>
+                        <field name="purchase_tax_ids" widget="many2many_tags" invisible="not force_warehouse_taxes"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
