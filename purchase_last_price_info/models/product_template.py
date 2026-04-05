@@ -18,22 +18,27 @@ class ProductTemplate(models.Model):
         comodel_name="purchase.order.line",
         compute="_compute_last_purchase_line_id",
         string="Last Purchase Line",
+        store=True,
     )
     last_purchase_price = fields.Float(
         compute="_compute_last_purchase_line_id_info",
+        store=True,
     )
     last_purchase_date = fields.Datetime(
         compute="_compute_last_purchase_line_id_info",
+        store=True,
     )
     last_purchase_supplier_id = fields.Many2one(
         comodel_name="res.partner",
         compute="_compute_last_purchase_line_id_info",
         string="Last Supplier",
+        store=True,
     )
     last_purchase_currency_id = fields.Many2one(
         comodel_name="res.currency",
         compute="_compute_last_purchase_line_id_info",
         string="Last Purchase Currency",
+        store=True,
     )
     show_last_purchase_price_currency = fields.Boolean(
         related="product_variant_ids.show_last_purchase_price_currency",

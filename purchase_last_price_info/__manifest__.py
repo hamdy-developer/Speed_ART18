@@ -9,7 +9,7 @@
     "development_status": "Production/Stable",
     "maintainers": ["LoisRForgeFlow"],
     "website": "https://github.com/OCA/purchase-workflow",
-    "depends": ["purchase"],
+    "depends": ["purchase", "stock"],
     "data": ["views/product_views.xml"],
     "installable": True,
 }
