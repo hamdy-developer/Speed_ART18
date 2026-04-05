@@ -1,0 +1,31 @@
+/* Company Logo Styles for Financial Report PDF Export */
+
+.o_content {
+    header {
+        .o_report_logo_header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #bbb;
+        }
+
+        .o_logo_col {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .o_company_logo_img {
+            max-height: 80px;
+            max-width: 150px;
+            object-fit: contain;
+        }
+
+        /* Move the title to the flex row instead of a separate div */
+        .o_report_logo_header .o_title {
+            margin: 0;
+            padding: 0;
+        }
+    }
+}

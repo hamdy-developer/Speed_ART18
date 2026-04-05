@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Override the pdf_export_main template to add company logo in header -->
+    <template id="pdf_export_main" inherit_id="account_reports.pdf_export_main">
+        <!-- Replace the header section to include logo -->
+        <xpath expr="//header" position="replace">
+            <header>
+                <div class="row o_report_logo_header">
+                    <!-- Company Logo -->
+                    <div class="col-2 o_logo_col">
+                        <t t-if="env.company.logo">
+                            <img t-att-src="image_data_uri(env.company.logo)"
+                                 class="o_company_logo_img"
+                                 alt="Company Logo"/>
+                        </t>
+                    </div>
+                    <!-- Report Title -->
+                    <div class="col-8 text-center">
+                        <div class="o_title">
+                            <t t-if="report.filter_show_draft and options['all_entries']">[Draft]</t>
+                            <t t-out="report_title"/>
+                        </div>
+                    </div>
+                    <div class="col-2"/>
+                </div>
+
+                <div class="row o_header_font">
+                    <div class="col-8">
+                        <!-- All company information (name, address, vat, ...) -->
+                        <t t-call="{{custom_templates.get('company_information', 'account_reports.company_information')}}"/>
+                    </div>
+                    <div class="col-4">
+                        <!-- All filters and options -->
+                        <t t-call="{{custom_templates.get('pdf_export_filters', 'account_reports.pdf_export_filters')}}"/>
+                    </div>
+                </div>
+            </header>
+        </xpath>
+    </template>
+
+</odoo>
