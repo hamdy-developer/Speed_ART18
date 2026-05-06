@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="customer_debt_report_xlsx_action" model="ir.actions.report">
+            <field name="name">Customer Debt Monthly</field>
+            <field name="model">customer.debt.report.wizard</field>
+            <field name="report_type">xlsx</field>
+            <field name="report_name">customer_debt_monthly_report.customer_debt_report_xlsx</field>
+            <field name="report_file">customer_debt_monthly_report</field>
+            <field name="binding_model_id" ref="model_customer_debt_report_wizard"/>
+            <field name="binding_type">report</field>
+        </record>
+    </data>
+</odoo>

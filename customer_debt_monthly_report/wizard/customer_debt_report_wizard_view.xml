@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="customer_debt_report_wizard_view_form" model="ir.ui.view">
+            <field name="name">customer.debt.report.wizard.form</field>
+            <field name="model">customer.debt.report.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Customer Debt Report">
+                    <group>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="number_of_months"/>
+                        </group>
+                        <group>
+                            <field name="partner_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_print_xlsx" string="Print Excel" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="customer_debt_report_wizard_action" model="ir.actions.act_window">
+            <field name="name">Customer Debt Report</field>
+            <field name="res_model">customer.debt.report.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_customer_debt_report"
+                  name="Customer Debt (Monthly)"
+                  parent="account.menu_finance_reports"
+                  action="customer_debt_report_wizard_action"
+                  sequence="100"/>
+    </data>
+</odoo>
