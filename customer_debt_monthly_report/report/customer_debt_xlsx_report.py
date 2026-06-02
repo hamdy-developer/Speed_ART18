@@ -9,7 +9,9 @@ class CustomerDebtXlsxReport(models.AbstractModel):
     def generate_xlsx_report(self, workbook, data, wizard):
         # Initial data from wizard
         date_from = fields.Date.from_string(data.get('date_from'))
+        report_by = data.get('report_by', 'partner')
         partner_ids = data.get('partner_ids')
+        employee_ids = data.get('employee_ids')
         num_months = data.get('number_of_months', 10)
 
         # Calculate months
@@ -41,10 +43,10 @@ class CustomerDebtXlsxReport(models.AbstractModel):
         })
 
         # Main Title
-        sheet.merge_range(1, 1, 1, 5 + num_months, 'مديونية العملاء', title_format)
+        sheet.merge_range(1, 1, 1, 6 + num_months, 'مديونية العملاء', title_format)
 
         # Headers
-        headers = ['Partner', 'Sales Employee', 'NO.Invoice', 'Value', 'Amount due']
+        headers = ['Partner', 'Sales Employee', 'NO.Invoice', 'Payment Term', 'Value', 'Amount due']
         col = 1
         for h in headers:
             sheet.write(3, col, h, header_format)
@@ -64,22 +66,40 @@ class CustomerDebtXlsxReport(models.AbstractModel):
         ]
         if partner_ids:
             domain.append(('partner_id', 'in', partner_ids))
+        if employee_ids:
+            domain.append(('move_id.sales_employee_id', 'in', employee_ids))
         
-        aml_lines = self.env['account.move.line'].search(domain, order='partner_id, move_id, date_maturity')
+        order = 'partner_id, move_id, date_maturity'
+        if report_by == 'employee':
+            order = 'move_id, date_maturity'
+            
+        aml_lines = self.env['account.move.line'].search(domain, order=order)
 
         # Group data
-        partners_data = {}
+        grouped_data = {}
         for line in aml_lines:
-            p_id = line.partner_id.id
+            if report_by == 'partner':
+                group_id = line.partner_id.id
+                group_name = line.partner_id.name
+            else:
+                group_id = line.move_id.sales_employee_id.id or 0
+                group_name = line.move_id.sales_employee_id.name or _('No Sales Employee')
+            
             m_id = line.move_id.id
             
-            if p_id not in partners_data:
-                partners_data[p_id] = {'name': line.partner_id.name, 'invoices': {}}
+            if group_id not in grouped_data:
+                grouped_data[group_id] = {'name': group_name, 'invoices': {}}
             
-            if m_id not in partners_data[p_id]['invoices']:
-                partners_data[p_id]['invoices'][m_id] = {
-                    'name': line.move_id.name,
+            if m_id not in grouped_data[group_id]['invoices']:
+                inv_name = line.move_id.name
+                if line.move_id.invoice_date:
+                    inv_name += f" ({line.move_id.invoice_date})"
+                
+                grouped_data[group_id]['invoices'][m_id] = {
+                    'name': inv_name,
+                    'partner_name': line.partner_id.name,
                     'sales_employee': line.move_id.sales_employee_id.name or '',
+                    'payment_term': line.move_id.invoice_payment_term_id.name or '',
                     'value': line.move_id.amount_total,
                     'amount_due': line.move_id.amount_residual,
                     'monthly_dues': {m: 0.0 for m in months}
@@ -88,12 +108,8 @@ class CustomerDebtXlsxReport(models.AbstractModel):
             # Find which month column this line falls into
             if line.date_maturity:
                 m_str = line.date_maturity.strftime('%b-%y')
-                if m_str in partners_data[p_id]['invoices'][m_id]['monthly_dues']:
-                    partners_data[p_id]['invoices'][m_id]['monthly_dues'][m_str] += line.amount_residual
-                else:
-                    # If date is outside range or before start month, maybe add to first month or a 'prior' column?
-                    # For now, let's just focus on the months requested.
-                    pass
+                if m_str in grouped_data[group_id]['invoices'][m_id]['monthly_dues']:
+                    grouped_data[group_id]['invoices'][m_id]['monthly_dues'][m_str] += line.amount_residual
 
         # Write data
         row = 4
@@ -101,19 +117,24 @@ class CustomerDebtXlsxReport(models.AbstractModel):
         overall_value = 0.0
         overall_due = 0.0
 
-        for p_id, p_info in partners_data.items():
-            # Write Partner Header Row
-            sheet.merge_range(row, 1, row, 5 + num_months, p_info['name'], partner_format)
+        for g_id, g_info in grouped_data.items():
+            # Write Header Row (Partner or Employee)
+            sheet.merge_range(row, 1, row, 6 + num_months, g_info['name'], partner_format)
             row += 1
 
-            for m_id, inv in p_info['invoices'].items():
-                sheet.write(row, 1, '', cell_format) # Empty partner cell in invoice rows
+            for m_id, inv in g_info['invoices'].items():
+                if report_by == 'partner':
+                    sheet.write(row, 1, '', cell_format)
+                else:
+                    sheet.write(row, 1, inv['partner_name'], cell_format)
+                
                 sheet.write(row, 2, inv['sales_employee'], cell_format)
                 sheet.write(row, 3, inv['name'], cell_format)
-                sheet.write(row, 4, inv['value'], cell_format)
-                sheet.write(row, 5, inv['amount_due'], cell_format)
+                sheet.write(row, 4, inv['payment_term'], cell_format)
+                sheet.write(row, 5, inv['value'], cell_format)
+                sheet.write(row, 6, inv['amount_due'], cell_format)
                 
-                col = 6
+                col = 7
                 for m in months:
                     val = inv['monthly_dues'][m]
                     sheet.write(row, col, val if val != 0 else '-', cell_format)
@@ -124,14 +145,16 @@ class CustomerDebtXlsxReport(models.AbstractModel):
                 overall_due += inv['amount_due']
                 row += 1
             
-        # Grand Total Row (Total Partner)
+        # Grand Total Row
         row += 1
-        sheet.write(row, 1, 'Total Partner', total_format)
+        label = _('Total Partner') if report_by == 'partner' else _('Total Sales Employee')
+        sheet.write(row, 1, label, total_format)
         sheet.write(row, 2, '', total_format)
         sheet.write(row, 3, '', total_format)
-        sheet.write(row, 4, overall_value, total_format)
-        sheet.write(row, 5, overall_due, total_format)
-        col = 6
+        sheet.write(row, 4, '', total_format)
+        sheet.write(row, 5, overall_value, total_format)
+        sheet.write(row, 6, overall_due, total_format)
+        col = 7
         for m in months:
             sheet.write(row, col, overall_totals[m], total_format)
             col += 1
@@ -139,6 +162,7 @@ class CustomerDebtXlsxReport(models.AbstractModel):
         # Set column widths
         sheet.set_column(1, 1, 30) # Partner
         sheet.set_column(2, 2, 20) # Sales Employee
-        sheet.set_column(3, 3, 20) # Invoice
-        sheet.set_column(4, 5, 15) # Value/Due
-        sheet.set_column(6, 6 + num_months, 12) # Months
+        sheet.set_column(3, 3, 35) # Invoice + Date
+        sheet.set_column(4, 4, 20) # Payment Term
+        sheet.set_column(5, 6, 15) # Value/Due
+        sheet.set_column(7, 7 + num_months, 12) # Months

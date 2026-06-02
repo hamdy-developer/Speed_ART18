@@ -7,14 +7,21 @@ class CustomerDebtReportWizard(models.TransientModel):
     _description = 'Customer Debt Report Wizard'
 
     date_from = fields.Date(string='Start Month', default=fields.Date.today(), required=True)
+    report_by = fields.Selection([
+        ('partner', 'Partner'),
+        ('employee', 'Sales Employee')
+    ], string='Report By', default='partner', required=True)
     partner_ids = fields.Many2many('res.partner', string='Partners', domain="[('customer_rank', '>', 0)]")
+    employee_ids = fields.Many2many('hr.employee', string='Sales Employees')
     number_of_months = fields.Integer(string='Number of Months', default=10, required=True)
 
     def action_print_xlsx(self):
         self.ensure_one()
         data = {
             'date_from': self.date_from,
+            'report_by': self.report_by,
             'partner_ids': self.partner_ids.ids,
+            'employee_ids': self.employee_ids.ids,
             'number_of_months': self.number_of_months,
         }
         return self.env.ref('customer_debt_monthly_report.customer_debt_report_xlsx_action').report_action(self, data=data)
