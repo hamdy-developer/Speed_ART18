@@ -11,6 +11,7 @@
         'report/invoice_report_template.xml',
         'report/bank_statement_line_report.xml',
         'report/bank_statement_line_report_template.xml',
+        'report/account_invoice_report_view.xml',
         'views/views.xml',
         'views/templates.xml',
         'views/vendor_evaluation_report_views.xml',

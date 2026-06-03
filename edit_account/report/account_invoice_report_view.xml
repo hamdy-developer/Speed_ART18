@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_account_invoice_report_search_inherit" model="ir.ui.view">
+        <field name="name">account.invoice.report.search.inherit</field>
+        <field name="model">account.invoice.report</field>
+        <field name="inherit_id" ref="account.view_account_invoice_report_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="after">
+                <field name="last_purchase_supplier_id" operator="child_of"/>
+            </xpath>
+            <xpath expr="//filter[@name='user']" position="after">
+                <filter string="Last Supplier" name="last_purchase_supplier" context="{'group_by':'last_purchase_supplier_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_account_invoice_report_list_inherit" model="ir.ui.view">
+        <field name="name">account.invoice.report.list.inherit</field>
+        <field name="model">account.invoice.report</field>
+        <field name="inherit_id" ref="account.account_invoice_report_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="after">
+                <field name="last_purchase_supplier_id" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
