@@ -35,6 +35,9 @@ class CustomerDebtXlsxReport(models.AbstractModel):
         partner_format = workbook.add_format({
             'bold': True, 'border': 1, 'align': 'left', 'bg_color': '#D9E1F2', 'font_size': 12
         })
+        subgroup_format = workbook.add_format({
+            'bold': True, 'border': 1, 'align': 'left', 'bg_color': '#F2F2F2', 'font_size': 11
+        })
         total_format = workbook.add_format({
             'bold': True, 'bg_color': '#F2F2F2', 'border': 1, 'align': 'center'
         })
@@ -69,33 +72,42 @@ class CustomerDebtXlsxReport(models.AbstractModel):
         if employee_ids:
             domain.append(('move_id.sales_employee_id', 'in', employee_ids))
         
-        order = 'partner_id, move_id, date_maturity'
-        if report_by == 'employee':
-            order = 'move_id, date_maturity'
-            
-        aml_lines = self.env['account.move.line'].search(domain, order=order)
+        aml_lines = self.env['account.move.line'].search(domain)
+        # Sort lines based on report_by to handle nested grouping
+        if report_by == 'partner':
+            aml_lines = aml_lines.sorted(key=lambda l: (l.partner_id.id, l.move_id.sales_employee_id.id or 0, l.move_id.id, l.date_maturity or fields.Date.today()))
+        else:
+            aml_lines = aml_lines.sorted(key=lambda l: (l.move_id.sales_employee_id.id or 0, l.partner_id.id, l.move_id.id, l.date_maturity or fields.Date.today()))
 
         # Group data
         grouped_data = {}
         for line in aml_lines:
+            p_id = line.partner_id.id
+            p_name = line.partner_id.name
+            e_id = line.move_id.sales_employee_id.id or 0
+            e_name = line.move_id.sales_employee_id.name or _('No Sales Employee')
+
             if report_by == 'partner':
-                group_id = line.partner_id.id
-                group_name = line.partner_id.name
+                primary_id, primary_name = p_id, p_name
+                secondary_id, secondary_name = e_id, e_name
             else:
-                group_id = line.move_id.sales_employee_id.id or 0
-                group_name = line.move_id.sales_employee_id.name or _('No Sales Employee')
+                primary_id, primary_name = e_id, e_name
+                secondary_id, secondary_name = p_id, p_name
+
+            if primary_id not in grouped_data:
+                grouped_data[primary_id] = {'name': primary_name, 'subgroups': {}}
+            
+            if secondary_id not in grouped_data[primary_id]['subgroups']:
+                grouped_data[primary_id]['subgroups'][secondary_id] = {'name': secondary_name, 'invoices': {}}
             
             m_id = line.move_id.id
             
-            if group_id not in grouped_data:
-                grouped_data[group_id] = {'name': group_name, 'invoices': {}}
-            
-            if m_id not in grouped_data[group_id]['invoices']:
+            if m_id not in grouped_data[primary_id]['subgroups'][secondary_id]['invoices']:
                 inv_name = line.move_id.name
                 if line.move_id.invoice_date:
                     inv_name += f" ({line.move_id.invoice_date})"
                 
-                grouped_data[group_id]['invoices'][m_id] = {
+                grouped_data[primary_id]['subgroups'][secondary_id]['invoices'][m_id] = {
                     'name': inv_name,
                     'partner_name': line.partner_id.name,
                     'sales_employee': line.move_id.sales_employee_id.name or '',
@@ -108,8 +120,8 @@ class CustomerDebtXlsxReport(models.AbstractModel):
             # Find which month column this line falls into
             if line.date_maturity:
                 m_str = line.date_maturity.strftime('%b-%y')
-                if m_str in grouped_data[group_id]['invoices'][m_id]['monthly_dues']:
-                    grouped_data[group_id]['invoices'][m_id]['monthly_dues'][m_str] += line.amount_residual
+                if m_str in grouped_data[primary_id]['subgroups'][secondary_id]['invoices'][m_id]['monthly_dues']:
+                    grouped_data[primary_id]['subgroups'][secondary_id]['invoices'][m_id]['monthly_dues'][m_str] += line.amount_residual
 
         # Write data
         row = 4
@@ -117,33 +129,34 @@ class CustomerDebtXlsxReport(models.AbstractModel):
         overall_value = 0.0
         overall_due = 0.0
 
-        for g_id, g_info in grouped_data.items():
-            # Write Header Row (Partner or Employee)
-            sheet.merge_range(row, 1, row, 6 + num_months, g_info['name'], partner_format)
+        for p_id, p_info in grouped_data.items():
+            # Write Primary Header Row
+            sheet.merge_range(row, 1, row, 6 + num_months, p_info['name'], partner_format)
             row += 1
 
-            for m_id, inv in g_info['invoices'].items():
-                if report_by == 'partner':
-                    sheet.write(row, 1, '', cell_format)
-                else:
-                    sheet.write(row, 1, inv['partner_name'], cell_format)
-                
-                sheet.write(row, 2, inv['sales_employee'], cell_format)
-                sheet.write(row, 3, inv['name'], cell_format)
-                sheet.write(row, 4, inv['payment_term'], cell_format)
-                sheet.write(row, 5, inv['value'], cell_format)
-                sheet.write(row, 6, inv['amount_due'], cell_format)
-                
-                col = 7
-                for m in months:
-                    val = inv['monthly_dues'][m]
-                    sheet.write(row, col, val if val != 0 else '-', cell_format)
-                    overall_totals[m] += val
-                    col += 1
-                
-                overall_value += inv['value']
-                overall_due += inv['amount_due']
+            for s_id, s_info in p_info['subgroups'].items():
+                # Write Secondary Header Row (Sub-group)
+                sheet.merge_range(row, 1, row, 6 + num_months, '    ' + s_info['name'], subgroup_format)
                 row += 1
+
+                for m_id, inv in s_info['invoices'].items():
+                    sheet.write(row, 1, inv['partner_name'], cell_format)
+                    sheet.write(row, 2, inv['sales_employee'], cell_format)
+                    sheet.write(row, 3, inv['name'], cell_format)
+                    sheet.write(row, 4, inv['payment_term'], cell_format)
+                    sheet.write(row, 5, inv['value'], cell_format)
+                    sheet.write(row, 6, inv['amount_due'], cell_format)
+                    
+                    col = 7
+                    for m in months:
+                        val = inv['monthly_dues'][m]
+                        sheet.write(row, col, val if val != 0 else '-', cell_format)
+                        overall_totals[m] += val
+                        col += 1
+                    
+                    overall_value += inv['value']
+                    overall_due += inv['amount_due']
+                    row += 1
             
         # Grand Total Row
         row += 1
