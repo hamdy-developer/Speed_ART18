@@ -22,6 +22,7 @@ This module adds Sales Employee functionality:
         'views/res_partner_views.xml',
         'views/sale_order_views.xml',
         'views/account_move_views.xml',
+        'views/account_invoice_report_view.xml',
     ],
     'installable': True,
     'application': False,
