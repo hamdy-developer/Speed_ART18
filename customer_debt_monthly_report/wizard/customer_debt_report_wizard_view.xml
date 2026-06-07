@@ -37,5 +37,11 @@
                   parent="account.menu_finance_reports"
                   action="customer_debt_report_wizard_action"
                   sequence="100"/>
+
+        <menuitem id="menu_customer_debt_report_sales"
+                  name="Customer Debt (Monthly)"
+                  parent="sale.menu_sale_report"
+                  action="customer_debt_report_wizard_action"
+                  sequence="100"/>
     </data>
 </odoo>

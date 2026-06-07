@@ -11,3 +11,5 @@ class AccountInvoiceReport(models.Model):
 
     def _select(self) -> SQL:
         return SQL("%s, move.sales_employee_id AS sales_employee_id", super()._select())
+
+

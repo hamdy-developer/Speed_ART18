@@ -9,7 +9,7 @@
         and monthly due amounts based on installment dates.
     """,
     'author': 'Antigravity',
-    'depends': ['account', 'report_xlsx', 'sales_employee'],
+    'depends': ['account', 'report_xlsx', 'sales_employee', 'sale'],
     'data': [
         'security/ir.model.access.csv',
         'wizard/customer_debt_report_wizard_view.xml',
