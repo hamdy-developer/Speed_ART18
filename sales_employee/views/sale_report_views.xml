@@ -8,9 +8,11 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='product_id']" position="after">
                 <field name="sales_employee_id"/>
+                <field name="invoice_date"/>
             </xpath>
             <xpath expr="//filter[@name='User']" position="after">
                 <filter string="Sales Employee" name="sales_employee" context="{'group_by':'sales_employee_id'}"/>
+                <filter string="Invoice Date" name="invoice_date" context="{'group_by':'invoice_date'}"/>
             </xpath>
         </field>
     </record>
@@ -23,6 +25,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='user_id']" position="after">
                 <field name="sales_employee_id" optional="show"/>
+                <field name="invoice_date" optional="show"/>
             </xpath>
             <xpath expr="//field[@name='price_total']" position="after">
                 <field name="amount_paid" optional="show" sum="Sum of Amount Paid"/>

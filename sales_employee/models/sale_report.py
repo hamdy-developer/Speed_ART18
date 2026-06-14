@@ -8,6 +8,7 @@ class SaleReport(models.Model):
 
     sales_employee_id = fields.Many2one('hr.employee', string='Sales Employee', readonly=True)
     amount_paid = fields.Float(string='Amount Paid', readonly=True)
+    invoice_date = fields.Date(string='Invoice Date', readonly=True)
 
     def _select_additional_fields(self):
         res = super()._select_additional_fields()
@@ -27,6 +28,19 @@ class SaleReport(models.Model):
               AND m.state = 'posted'
               AND m.move_type IN ('out_invoice', 'out_refund')
         ), 0.0)"""
+        res["invoice_date"] = """(
+            SELECT m.invoice_date
+            FROM account_move m
+            JOIN account_move_line inv_l ON m.id = inv_l.move_id
+            JOIN sale_order_line_invoice_rel rel ON rel.invoice_line_id = inv_l.id
+            JOIN sale_order_line sol ON sol.id = rel.order_line_id
+            WHERE sol.order_id = l.order_id
+              AND sol.product_id = l.product_id
+              AND m.state = 'posted'
+              AND m.move_type IN ('out_invoice', 'out_refund')
+            ORDER BY m.invoice_date DESC
+            LIMIT 1
+        )"""
         return res
 
     def _group_by_sale(self):
