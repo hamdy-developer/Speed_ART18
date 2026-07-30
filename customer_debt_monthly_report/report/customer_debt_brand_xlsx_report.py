@@ -131,7 +131,7 @@ class CustomerDebtBrandXlsxReport(models.AbstractModel):
             if b_name not in grouped_data[primary_id]['brand_totals']:
                 grouped_data[primary_id]['brand_totals'][b_name] = {
                     'value': 0.0,
-                    'amount_due': 0.0,
+                    'amount_paid': 0.0,
                     'monthly_dues': {m: 0.0 for m in months}
                 }
             
@@ -149,13 +149,13 @@ class CustomerDebtBrandXlsxReport(models.AbstractModel):
                     'sales_employee': e_name,
                     'payment_term': line.move_id.invoice_payment_term_id.name or '',
                     'value': line.move_id.amount_total,
-                    'amount_due': line.move_id.amount_residual,
+                    'amount_paid': line.move_id.amount_total - line.move_id.amount_residual,
                     'monthly_dues': {m: 0.0 for m in months}
                 }
                 
                 # Add to brand totals for this primary group
                 grouped_data[primary_id]['brand_totals'][b_name]['value'] += line.move_id.amount_total
-                grouped_data[primary_id]['brand_totals'][b_name]['amount_due'] += line.move_id.amount_residual
+                grouped_data[primary_id]['brand_totals'][b_name]['amount_paid'] += (line.move_id.amount_total - line.move_id.amount_residual)
             
             if line.date_maturity:
                 m_str = line.date_maturity.strftime('%b-%y')
@@ -166,14 +166,14 @@ class CustomerDebtBrandXlsxReport(models.AbstractModel):
         row = 4
         overall_totals = {m: 0.0 for m in months}
         overall_value = 0.0
-        overall_due = 0.0
+        overall_paid = 0.0
 
         for p_id, p_info in grouped_data.items():
             sheet.merge_range(row, 1, row, 7 + num_months, p_info['name'], primary_format)
             row += 1
             
             primary_value = 0.0
-            primary_due = 0.0
+            primary_paid = 0.0
             primary_monthly = {m: 0.0 for m in months}
 
             for s_id, s_info in p_info['subgroups'].items():
@@ -187,12 +187,12 @@ class CustomerDebtBrandXlsxReport(models.AbstractModel):
                     sheet.write(row, 4, inv['payment_term'], cell_format)
                     sheet.write(row, 5, inv['brand_name'], cell_format)
                     sheet.write(row, 6, inv['value'], cell_format)
-                    sheet.write(row, 7, inv['amount_due'], cell_format)
+                    sheet.write(row, 7, inv['amount_paid'], cell_format)
                     
                     primary_value += inv['value']
-                    primary_due += inv['amount_due']
+                    primary_paid += inv['amount_paid']
                     overall_value += inv['value']
-                    overall_due += inv['amount_due']
+                    overall_paid += inv['amount_paid']
                     
                     col = 8
                     for m in months:
@@ -208,7 +208,7 @@ class CustomerDebtBrandXlsxReport(models.AbstractModel):
             label = f"Total Collected {'Employee' if report_by == 'employee' else 'Brand'} {p_info['name']}"
             sheet.merge_range(row, 1, row, 5, label, total_format)
             sheet.write(row, 6, primary_value, total_format)
-            sheet.write(row, 7, primary_due, total_format)
+            sheet.write(row, 7, primary_paid, total_format)
             col = 8
             for m in months:
                 sheet.write(row, col, primary_monthly[m], total_format)
@@ -220,7 +220,7 @@ class CustomerDebtBrandXlsxReport(models.AbstractModel):
                 b_label = f"Total Collected EMP - {b_name} - {p_info['name']}" if report_by == 'employee' else f"Total Collected - {p_info['name']} - {b_name}"
                 sheet.merge_range(row, 1, row, 5, b_label, brand_total_format)
                 sheet.write(row, 6, b_totals['value'], brand_total_format)
-                sheet.write(row, 7, b_totals['amount_due'], brand_total_format)
+                sheet.write(row, 7, b_totals['amount_paid'], brand_total_format)
                 col = 8
                 for m in months:
                     sheet.write(row, col, b_totals['monthly_dues'][m], brand_total_format)
@@ -230,7 +230,7 @@ class CustomerDebtBrandXlsxReport(models.AbstractModel):
         row += 1
         sheet.merge_range(row, 1, row, 5, _('Grand Total'), total_format)
         sheet.write(row, 6, overall_value, total_format)
-        sheet.write(row, 7, overall_due, total_format)
+        sheet.write(row, 7, overall_paid, total_format)
         col = 8
         for m in months:
             sheet.write(row, col, overall_totals[m], total_format)
