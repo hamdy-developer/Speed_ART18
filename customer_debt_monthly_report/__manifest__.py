@@ -8,7 +8,7 @@
         It displays open invoices grouped by partner, showing total values, amounts due,
         and monthly due amounts based on installment dates.
     """,
-    'author': 'Antigravity',
+    'author': 'ENG/Mohamed Ahmed',
     'depends': ['account', 'report_xlsx', 'sales_employee', 'sale', 'product_brand'],
     'data': [
         'security/ir.model.access.csv',

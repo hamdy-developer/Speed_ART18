@@ -30,18 +30,21 @@
             <field name="res_model">customer.debt.brand.report.wizard</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
+            <field name="groups_id" eval="[(4, ref('sales_team.group_sale_salesman')), (4, ref('sales_team.group_sale_salesman_all_leads')), (4, ref('account.group_account_invoice'))]"/>
         </record>
 
         <menuitem id="menu_customer_debt_brand_report"
                   name="Customer Debt By Brand"
                   parent="account.menu_finance_reports"
                   action="customer_debt_brand_report_wizard_action"
+                  groups="account.group_account_invoice"
                   sequence="101"/>
 
         <menuitem id="menu_customer_debt_brand_report_sales"
                   name="Customer Debt By Brand"
                   parent="sale.menu_sale_report"
                   action="customer_debt_brand_report_wizard_action"
+                  groups="sales_team.group_sale_salesman,sales_team.group_sale_salesman_all_leads"
                   sequence="101"/>
     </data>
 </odoo>

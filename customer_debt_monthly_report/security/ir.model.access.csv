@@ -1,3 +1,8 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_customer_debt_report_wizard,customer.debt.report.wizard,model_customer_debt_report_wizard,account.group_account_invoice,1,1,1,1
 access_customer_debt_brand_report_wizard,customer.debt.brand.report.wizard,model_customer_debt_brand_report_wizard,account.group_account_invoice,1,1,1,1
+access_customer_debt_report_wizard_sales_user,customer.debt.report.wizard.sales.user,model_customer_debt_report_wizard,sales_team.group_sale_salesman,1,1,1,1
+access_customer_debt_report_wizard_sales_all,customer.debt.report.wizard.sales.all,model_customer_debt_report_wizard,sales_team.group_sale_salesman_all_leads,1,1,1,1
+access_customer_debt_brand_report_wizard_sales_user,customer.debt.brand.report.wizard.sales.user,model_customer_debt_brand_report_wizard,sales_team.group_sale_salesman,1,1,1,1
+access_customer_debt_brand_report_wizard_sales_all,customer.debt.brand.report.wizard.sales.all,model_customer_debt_brand_report_wizard,sales_team.group_sale_salesman_all_leads,1,1,1,1
+
